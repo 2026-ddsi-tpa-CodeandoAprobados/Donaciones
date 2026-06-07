@@ -1,0 +1,21 @@
+package ar.edu.utn.dds.k3003.repositories_dataMapper.identificadores;
+
+import ar.edu.utn.dds.k3003.catedra.dtos.donaciones.IdentificadorDTO;
+import ar.edu.utn.dds.k3003.model.identificadores.Identificador;
+
+import java.util.List;
+import java.util.Optional;
+
+public interface IdentificadoresRepository {
+
+    Identificador save(Identificador identificador);
+
+    Optional<Identificador> findByID(String id);
+
+    List<Identificador> findAllIdentificadores();
+
+    void deleteById(String identificadorID);
+
+}
+
+
