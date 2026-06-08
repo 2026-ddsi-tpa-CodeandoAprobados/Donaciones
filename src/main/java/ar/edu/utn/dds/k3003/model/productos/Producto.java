@@ -11,15 +11,16 @@ public class Producto {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Getter @Setter private String id;
 
-    @Column(name = "prod_nombre" , nullable = false)
+    @Column(nullable = false)
     @Getter @Setter private String nombre;
 
-    @Column(name = "prod_descripcion" , nullable = false)
+    @Column(nullable = false)
     @Getter @Setter private String descripcion;
 
-    @Column(name = "prod_categoria" , nullable = false)
+    @Column(nullable = false)
     @Getter @Setter private String categoriaID;
 
+    @Column(nullable = false)
     @Getter @Setter private String identificadorID;
 
     public Producto(
@@ -36,4 +37,5 @@ public class Producto {
         }
 
 
+    public Producto() {}
 }

@@ -31,10 +31,14 @@ public class Donacion{
     @Column(name = "estado" , nullable = false)
     @Setter @Getter private EstadoDonacionEnum estado;
 
-    @Column(name = "detalleProducto" ,  nullable = false)
+    @OneToMany
+    @JoinColumn(name = "detalleProductoID")
     @Setter @Getter private List<DetalleProducto> detallesProductos;
 
+    @Column(nullable = false , length = 10)
     @Setter @Getter private LocalDate fechaRegistro;
+
+    public Donacion() {}
 
     public Donacion
         (String donadorID,

@@ -14,10 +14,10 @@ public class Identificador {
     @Getter @Setter private String id;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "iden_tipo" , nullable = false, length = 30)
+    @Column(nullable = false, length = 30)
     @Getter @Setter private TipoIdentificadorEnum tipo;
 
-    @Column(name = "iden_descripcion", nullable = false)
+    @Column(nullable = false)
     @Getter @Setter private String descripcion;
 
     public Identificador(TipoIdentificadorEnum tipo, String descripcion) {
@@ -25,7 +25,5 @@ public class Identificador {
         this.setDescripcion(descripcion);
     }
 
-
-
-
+    public Identificador() {}
 }

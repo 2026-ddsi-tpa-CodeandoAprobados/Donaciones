@@ -12,7 +12,7 @@ import ar.edu.utn.dds.k3003.catedra.fachadas.FachadaDonaciones;
 import ar.edu.utn.dds.k3003.catedra.fachadas.FachadaDonadoresYEntidades;
 import ar.edu.utn.dds.k3003.catedra.fachadas.FachadaLogistica;
 import ar.edu.utn.dds.k3003.exceptions.donaciones.DonacionNoSePuedeRegistrar;
-import ar.edu.utn.dds.k3003.repositories_dataMapper.historialEstados.HistorialEstadosDonacionRepository;
+import ar.edu.utn.dds.k3003.repositories_DataMapper.historialEstados.HistorialEstadosDonacionRepository;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;

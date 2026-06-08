@@ -31,23 +31,26 @@ import java.util.Optional;
 import ar.edu.utn.dds.k3003.model.identificadores.Identificador;
 import ar.edu.utn.dds.k3003.model.productos.DetalleProducto;
 import ar.edu.utn.dds.k3003.model.productos.Producto;
-import ar.edu.utn.dds.k3003.repositories_dataMapper.categorias.CategoriasDataMapper;
-import ar.edu.utn.dds.k3003.repositories_dataMapper.categorias.CategoriasRepository;
-import ar.edu.utn.dds.k3003.repositories_dataMapper.categorias.InMemoryCateRepo;
-import ar.edu.utn.dds.k3003.repositories_dataMapper.donaciones.DonacionesDataMapper;
-import ar.edu.utn.dds.k3003.repositories_dataMapper.donaciones.DonacionesRepository;
-import ar.edu.utn.dds.k3003.repositories_dataMapper.donaciones.InMemoryDonacionesRepository;
-import ar.edu.utn.dds.k3003.repositories_dataMapper.historialEstados.HistorialEstadosDonacionRepository;
-import ar.edu.utn.dds.k3003.repositories_dataMapper.historialEstados.InMemoryHistorialDeEstadosRepo;
-import ar.edu.utn.dds.k3003.repositories_dataMapper.identificadores.IdentificadoresDataMapper;
-import ar.edu.utn.dds.k3003.repositories_dataMapper.identificadores.IdentificadoresRepository;
-import ar.edu.utn.dds.k3003.repositories_dataMapper.identificadores.InMemoryIdentificadorRepo;
-import ar.edu.utn.dds.k3003.repositories_dataMapper.productos.DetallesProductos.DetallesProductosDataMapper;
-import ar.edu.utn.dds.k3003.repositories_dataMapper.productos.DetallesProductos.DetallesProductosRepository;
-import ar.edu.utn.dds.k3003.repositories_dataMapper.productos.DetallesProductos.InMemoryDetalleProdRepository;
-import ar.edu.utn.dds.k3003.repositories_dataMapper.productos.InMemoryProdRepo;
-import ar.edu.utn.dds.k3003.repositories_dataMapper.productos.ProductosDataMapper;
-import ar.edu.utn.dds.k3003.repositories_dataMapper.productos.ProductosRepository;
+import ar.edu.utn.dds.k3003.repositories_DataMapper.categorias.CategoriasDataMapper;
+import ar.edu.utn.dds.k3003.repositories_DataMapper.categorias.CategoriasRepository;
+import ar.edu.utn.dds.k3003.repositories_DataMapper.categorias.InMemoryCateRepo;
+import ar.edu.utn.dds.k3003.repositories_DataMapper.donaciones.DonacionesDataMapper;
+import ar.edu.utn.dds.k3003.repositories_DataMapper.donaciones.DonacionesRepository;
+import ar.edu.utn.dds.k3003.repositories_DataMapper.donaciones.InMemoryDonacionesRepository;
+import ar.edu.utn.dds.k3003.repositories_DataMapper.historialEstados.HistorialEstadosDonacionRepository;
+import ar.edu.utn.dds.k3003.repositories_DataMapper.historialEstados.InMemoryHistorialDeEstadosRepo;
+import ar.edu.utn.dds.k3003.repositories_DataMapper.identificadores.IdentificadoresDataMapper;
+import ar.edu.utn.dds.k3003.repositories_DataMapper.identificadores.IdentificadoresRepository;
+import ar.edu.utn.dds.k3003.repositories_DataMapper.identificadores.InMemoryIdentificadorRepo;
+import ar.edu.utn.dds.k3003.repositories_DataMapper.productos.DetallesProductos.DetallesProductosDataMapper;
+import ar.edu.utn.dds.k3003.repositories_DataMapper.productos.DetallesProductos.DetallesProductosRepository;
+import ar.edu.utn.dds.k3003.repositories_DataMapper.productos.DetallesProductos.InMemoryDetalleProdRepository;
+import ar.edu.utn.dds.k3003.repositories_DataMapper.productos.InMemoryProdRepo;
+import ar.edu.utn.dds.k3003.repositories_DataMapper.productos.ProductosDataMapper;
+import ar.edu.utn.dds.k3003.repositories_DataMapper.productos.ProductosRepository;
+import ar.edu.utn.dds.k3003.repositories_DataMapper.subcategorias.SubcategoriasDataMapper;
+import ar.edu.utn.dds.k3003.repositories_DataMapper.subcategorias.SubcategoriasRepository;
+import ar.edu.utn.dds.k3003.repositories_DataMapper.subcategorias.InMemorySubcategoriaRepo;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.val;
@@ -68,6 +71,8 @@ public class Fachada implements FachadaDonaciones {
 
     @Getter @Setter private CategoriasRepository categoriasRepository;
 
+    @Getter @Setter private SubcategoriasRepository subcategoriasRepository;
+
     @Getter @Setter private DonacionesRepository donacionRepository;
 
     @Getter @Setter private DetallesProductosRepository detallesProductosRepository;
@@ -79,6 +84,8 @@ public class Fachada implements FachadaDonaciones {
     @Getter @Setter private IdentificadoresDataMapper identificadoresDataMapper = new IdentificadoresDataMapper();
 
     @Getter @Setter private CategoriasDataMapper categoriasDataMapper = new CategoriasDataMapper();
+
+    @Getter @Setter private SubcategoriasDataMapper subcategoriasDataMapper = new SubcategoriasDataMapper();
 
     @Getter @Setter private DetallesProductosDataMapper detallesProductosDataMapper = new DetallesProductosDataMapper();
 
@@ -93,6 +100,7 @@ public class Fachada implements FachadaDonaciones {
         this.historialEstadosRepository = new InMemoryHistorialDeEstadosRepo();
         this.productosRepository = new InMemoryProdRepo();
         this.categoriasRepository = new InMemoryCateRepo();
+        this.subcategoriasRepository = new InMemorySubcategoriaRepo();
         this.detallesProductosRepository = new InMemoryDetalleProdRepository();
 
     }
@@ -228,9 +236,7 @@ public class Fachada implements FachadaDonaciones {
             throw new SinDonaciones("No hay donaciones cargadas en el sistema.");
         }
 
-        val donacionesDTO = donaciones.stream().map(donacion -> this.donacionesDataMapper.toDonacionDTO(donacion)).toList();
-
-        return donacionesDTO;
+        return donaciones.stream().map(donacion -> this.donacionesDataMapper.toDonacionDTO(donacion)).toList();
     }
 
     public DonacionDTO registrarDonacion(DonacionDTO donacionDTO) {
@@ -276,16 +282,14 @@ public class Fachada implements FachadaDonaciones {
     }
 
     private void validarProductos(List<DetalleProductoDTO> detallesProductosDTOs) {
-        detallesProductosDTOs.stream().forEach(detalleProductoDTO -> this.productoExiste(detalleProductoDTO.productoID()));
+        detallesProductosDTOs.forEach(detalleProductoDTO -> this.productoExiste(detalleProductoDTO.productoID()));
     }
 
     private List<DetalleProducto> registrarDetallesProductos(List<DetalleProductoDTO> detallesProductosDTO){
 
         val detallesProductosAguardar = this.detallesProductosDataMapper.toDetallesProductos(detallesProductosDTO);
 
-        val detallesProductosGuardados = this.detallesProductosRepository.saveAll(detallesProductosAguardar);
-
-        return detallesProductosGuardados;
+        return this.detallesProductosRepository.saveAll(detallesProductosAguardar);
 
     }
 
@@ -337,9 +341,7 @@ public class Fachada implements FachadaDonaciones {
             throw new DonacionNoEncontrada("No hay ninguna donación que esté emparajada con el donador y fecha de inicio solicitados");
         }
 
-        val donacionesFinales = this.donacionesDataMapper.donacionesToDonacionesDTO(donacionesOpcionales);
-
-        return donacionesFinales;
+        return this.donacionesDataMapper.donacionesToDonacionesDTO(donacionesOpcionales);
 
     }
 
@@ -352,10 +354,8 @@ public class Fachada implements FachadaDonaciones {
                 = new QuejaDTO(null, donacionRegistrada.getId(), donacionRegistrada.getDonadorID(), LocalDate.now(), descripcion);
 
         this.fachadaDonadoresYEnt.agregarQueja(quejaGestionable);
-        
-        val donacionModificada = cambiarEstadoDeDonacion(donacionID, EstadoDonacionEnum.CONQUEJA);
 
-        return donacionModificada;
+        return cambiarEstadoDeDonacion(donacionID, EstadoDonacionEnum.CONQUEJA);
 
     }
 

@@ -1,10 +1,8 @@
-package ar.edu.utn.dds.k3003.repositories_dataMapper.productos.DetallesProductos;
+package ar.edu.utn.dds.k3003.repositories_DataMapper.productos.DetallesProductos;
 
 import ar.edu.utn.dds.k3003.catedra.dtos.donaciones.DetalleProductoDTO;
 import ar.edu.utn.dds.k3003.model.productos.DetalleProducto;
-import lombok.val;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class DetallesProductosDataMapper {

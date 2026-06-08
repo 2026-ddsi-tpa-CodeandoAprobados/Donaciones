@@ -1,9 +1,7 @@
-package ar.edu.utn.dds.k3003.repositories_dataMapper.identificadores;
+package ar.edu.utn.dds.k3003.repositories_DataMapper.identificadores;
 
-import ar.edu.utn.dds.k3003.catedra.dtos.donaciones.IdentificadorDTO;
 import ar.edu.utn.dds.k3003.model.identificadores.Identificador;
 import lombok.Getter;
-import lombok.val;
 
 import java.util.ArrayList;
 import java.util.List;

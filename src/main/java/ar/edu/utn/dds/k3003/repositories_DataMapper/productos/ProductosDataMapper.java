@@ -1,4 +1,4 @@
-package ar.edu.utn.dds.k3003.repositories_dataMapper.productos;
+package ar.edu.utn.dds.k3003.repositories_DataMapper.productos;
 
 import ar.edu.utn.dds.k3003.catedra.dtos.donaciones.ProductoDTO;
 import ar.edu.utn.dds.k3003.model.productos.Producto;

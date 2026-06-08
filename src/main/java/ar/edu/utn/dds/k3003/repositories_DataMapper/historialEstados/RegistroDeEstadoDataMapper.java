@@ -1,7 +1,7 @@
-package ar.edu.utn.dds.k3003.repositories_dataMapper.historialEstados;
+package ar.edu.utn.dds.k3003.repositories_DataMapper.historialEstados;
 
 import ar.edu.utn.dds.k3003.model.registroEstado.RegistroEstado;
-import ar.edu.utn.dds.k3003.model.registroEstado.RegistroEstadoDTO;
+import ar.edu.utn.dds.k3003.catedra.dtos.donaciones.RegistroEstadoDTO;
 
 public class RegistroDeEstadoDataMapper {
 

@@ -13,11 +13,13 @@ public class DetalleProducto {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Getter @Setter  private String detalleProductoID;
 
-    @Column(name = "deta_prod_producto" , nullable = false)
+    @Column(nullable = false)
     @Getter @Setter private String productoID;
 
-    @Column(name = "deta_prod_cantidad" , nullable = false)
+    @Column(nullable = false)
     @Getter @Setter private Integer cantidadProducto;
+
+    public DetalleProducto() {}
 
     public DetalleProducto(String productoID, Integer cantidadProducto) {
         this.setProductoID(productoID);

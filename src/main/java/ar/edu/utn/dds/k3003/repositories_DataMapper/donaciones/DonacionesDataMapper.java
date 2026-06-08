@@ -1,8 +1,8 @@
-package ar.edu.utn.dds.k3003.repositories_dataMapper.donaciones;
+package ar.edu.utn.dds.k3003.repositories_DataMapper.donaciones;
 
 import ar.edu.utn.dds.k3003.catedra.dtos.donaciones.DonacionDTO;
 import ar.edu.utn.dds.k3003.model.donaciones.Donacion;
-import ar.edu.utn.dds.k3003.repositories_dataMapper.productos.DetallesProductos.DetallesProductosDataMapper;
+import ar.edu.utn.dds.k3003.repositories_DataMapper.productos.DetallesProductos.DetallesProductosDataMapper;
 import lombok.Getter;
 
 import java.util.List;

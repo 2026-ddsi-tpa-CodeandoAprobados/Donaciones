@@ -1,4 +1,4 @@
-package ar.edu.utn.dds.k3003.repositories_dataMapper.categorias;
+package ar.edu.utn.dds.k3003.repositories_DataMapper.categorias;
 
 import ar.edu.utn.dds.k3003.model.categorias.Categoria;
 import lombok.Getter;

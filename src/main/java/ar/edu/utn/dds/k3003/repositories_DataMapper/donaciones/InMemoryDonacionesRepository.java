@@ -1,4 +1,4 @@
-package ar.edu.utn.dds.k3003.repositories_dataMapper.donaciones;
+package ar.edu.utn.dds.k3003.repositories_DataMapper.donaciones;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
