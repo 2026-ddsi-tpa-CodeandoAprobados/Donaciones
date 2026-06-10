@@ -19,7 +19,7 @@ public class InMemoryDetalleProdRepository implements DetallesProductosRepositor
 
 
     @Override
-    public Optional<DetalleProducto> findById(String id) {
+    public Optional<DetalleProducto> findById(Long id) {
         return this.getDetallesProductos().stream().filter(d -> d.getDetalleProductoID().equals(id)).findFirst();
     }
 
@@ -27,7 +27,7 @@ public class InMemoryDetalleProdRepository implements DetallesProductosRepositor
     public DetalleProducto saveOne(DetalleProducto detalleProductoAguardar){
 
         if(detalleProductoAguardar.getDetalleProductoID()== null){
-            detalleProductoAguardar.setDetalleProductoID(String.valueOf(this.getIdSecuencial().getAndIncrement()));
+            detalleProductoAguardar.setDetalleProductoID(this.getIdSecuencial().getAndIncrement());
         }
 
         this.detallesProductos.add(detalleProductoAguardar);

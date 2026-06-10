@@ -18,7 +18,7 @@ public class InMemoryCateRepo implements CategoriasRepository{
     public Categoria save(Categoria categoria) {
 
         if(categoria.getId() == null){
-            categoria.setId(String.valueOf(this.getIdSecuencial().getAndIncrement()));
+            categoria.setId(this.getIdSecuencial().getAndIncrement());
         }
 
         this.categorias.add(categoria);
@@ -28,13 +28,13 @@ public class InMemoryCateRepo implements CategoriasRepository{
     }
 
     @Override
-    public Optional<Categoria> findById(String categoriaID) {
+    public Optional<Categoria> findById(Long categoriaID) {
         return categorias.stream().filter(cat -> cat.getId().equals(categoriaID)).findFirst();
     }
 
     @Override
     public void deleteById(String categoriaID) {
-        categorias.removeIf(cat -> cat.getId().equals(categoriaID));
+        categorias.removeIf(cat -> cat.getId().toString().equals(categoriaID));
     }
 
     @Override

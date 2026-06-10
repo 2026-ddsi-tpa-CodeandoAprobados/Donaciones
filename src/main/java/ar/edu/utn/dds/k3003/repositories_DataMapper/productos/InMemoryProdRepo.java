@@ -16,15 +16,15 @@ public class InMemoryProdRepo implements ProductosRepository {
     @Setter @Getter private AtomicLong idSecuencial = new AtomicLong(1);
 
     @Override
-    public Optional<Producto> findById(String id) {
-        return Optional.empty();
+    public Optional<Producto> findById(Long id) {
+        return this.getProductos().stream().filter(producto -> producto.getId().equals(id)).findFirst();
     }
 
     @Override
     public Producto save(Producto producto) {
 
         if(producto.getId() == null){
-            producto.setId(String.valueOf(getIdSecuencial().getAndIncrement()));
+            producto.setId(getIdSecuencial().getAndIncrement());
         }
 
         this.productos.add(producto);
@@ -40,7 +40,7 @@ public class InMemoryProdRepo implements ProductosRepository {
 
     @Override
     public void deleteById(String productoID) {
-        this.getProductos().removeIf(producto -> producto.getId().equals(productoID));
+        this.getProductos().removeIf(producto -> producto.getId().toString().equals(productoID));
     }
 
 

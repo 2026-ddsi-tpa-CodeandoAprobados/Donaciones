@@ -2,7 +2,6 @@ package ar.edu.utn.dds.k3003.model.identificadores;
 
 import ar.edu.utn.dds.k3003.catedra.dtos.donaciones.TipoIdentificadorEnum;
 import jakarta.persistence.*;
-import jdk.jfr.Name;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -11,7 +10,7 @@ import lombok.Setter;
 public class Identificador {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Getter @Setter private String id;
+    @Getter @Setter private Long id;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 30)

@@ -7,16 +7,21 @@ import lombok.Setter;
 
 import java.time.LocalDate;
 
+@Entity
+@Table(name = "registro_estado")
 public class RegistroEstado {
 
-    @Id @GeneratedValue (strategy = GenerationType.IDENTITY)
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Getter @Setter private Long id;
+
+    @Column(nullable = false)
     @Getter @Setter private String donacionID;
 
-    @Column (nullable = false , length = 10)
+    @Column(nullable = false)
     @Getter @Setter private LocalDate fechaEstado;
 
-    @Enumerated (EnumType.STRING)
-    @Column(nullable = false , length = 30)
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false, length = 30)
     @Getter @Setter private EstadoDonacionEnum estado;
 
     public RegistroEstado(){}

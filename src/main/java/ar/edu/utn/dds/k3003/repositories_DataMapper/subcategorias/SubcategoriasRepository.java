@@ -9,7 +9,7 @@ public interface SubcategoriasRepository {
 
     public Subcategoria save(Subcategoria subcategoria);
 
-    public Optional<Subcategoria> findById(String subcategoriaID);
+    public Optional<Subcategoria> findById(Long subcategoriaID);
 
     public void deleteById(String subcategoriaID);
 

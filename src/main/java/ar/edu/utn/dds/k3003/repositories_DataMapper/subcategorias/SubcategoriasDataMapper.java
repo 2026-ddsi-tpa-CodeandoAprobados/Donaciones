@@ -7,7 +7,7 @@ public class SubcategoriasDataMapper {
 
     public SubcategoriaDTO toSubcategoriaDTO(Subcategoria subcategoria){
         return new SubcategoriaDTO(
-                subcategoria.getId(),
+                subcategoria.getId().toString(),
                 subcategoria.getDescripcion(),
                 subcategoria.getNombre(),
                 subcategoria.getCategoriaID()

@@ -8,7 +8,7 @@ import java.util.Optional;
 
 public interface DonacionesRepository {
 
-    Optional<Donacion> findById(String id);
+    Optional<Donacion> findById(Long id);
 
     List<Donacion> findAll();
 

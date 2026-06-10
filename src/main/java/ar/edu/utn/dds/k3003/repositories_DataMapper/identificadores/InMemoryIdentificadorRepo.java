@@ -17,7 +17,7 @@ public class InMemoryIdentificadorRepo implements IdentificadoresRepository{
     public Identificador save(Identificador identificador) {
 
         if(identificador.getId() == null) {
-            identificador.setId(String.valueOf(this.getIdSecuencial().getAndIncrement()));
+            identificador.setId(this.getIdSecuencial().getAndIncrement());
         }
 
         this.identificadores.add(identificador);
@@ -27,13 +27,13 @@ public class InMemoryIdentificadorRepo implements IdentificadoresRepository{
     }
 
     @Override
-    public Optional<Identificador> findByID(String id) {
+    public Optional<Identificador> findByID(Long id) {
         return identificadores.stream().filter(identificador -> identificador.getId().equals(id)).findFirst();
     }
 
     @Override
     public void deleteById(String identificadorID) {
-        this.getIdentificadores().removeIf(id -> id.getId().equals(identificadorID));
+        this.getIdentificadores().removeIf(id -> id.getId().toString().equals(identificadorID));
     }
 
     @Override

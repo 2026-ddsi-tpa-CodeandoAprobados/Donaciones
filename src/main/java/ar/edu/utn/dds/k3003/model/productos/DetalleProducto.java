@@ -11,7 +11,7 @@ import lombok.Setter;
 public class DetalleProducto {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Getter @Setter  private String detalleProductoID;
+    @Getter @Setter  private Long detalleProductoID;
 
     @Column(nullable = false)
     @Getter @Setter private String productoID;

@@ -18,7 +18,7 @@ public class InMemorySubcategoriaRepo implements SubcategoriasRepository{
     public Subcategoria save(Subcategoria subcategoria) {
 
         if(subcategoria.getId() == null){
-            subcategoria.setId(String.valueOf(this.getIdSecuencial().getAndIncrement()));
+            subcategoria.setId(this.getIdSecuencial().getAndIncrement());
         }
 
         this.subcategorias.add(subcategoria);
@@ -27,13 +27,13 @@ public class InMemorySubcategoriaRepo implements SubcategoriasRepository{
     }
 
     @Override
-    public Optional<Subcategoria> findById(String subcategoriaID) {
+    public Optional<Subcategoria> findById(Long subcategoriaID) {
         return this.subcategorias.stream().filter(s -> s.getId().equals(subcategoriaID)).findFirst();
     }
 
     @Override
     public void deleteById(String subcategoriaID) {
-        this.subcategorias.removeIf(s -> s.getId().equals(subcategoriaID));
+        this.subcategorias.removeIf(s -> s.getId().toString().equals(subcategoriaID));
     }
 
     @Override

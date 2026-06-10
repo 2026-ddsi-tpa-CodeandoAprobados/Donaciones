@@ -30,7 +30,7 @@ public class InMemoryDonacionesRepository implements DonacionesRepository {
     }
 
     @Override
-    public Optional<Donacion> findById(String id) {
+    public Optional<Donacion> findById(Long id) {
         return this.getDonaciones().stream().filter(d -> d.getId().equals(id)).findFirst();
     }
 
@@ -40,7 +40,7 @@ public class InMemoryDonacionesRepository implements DonacionesRepository {
         val donacionConID = donacion;
 
         if(donacionConID.getId() == null) {
-            donacionConID.setId(String.valueOf(this.getIdSecuencial().getAndIncrement()));
+            donacionConID.setId(this.getIdSecuencial().getAndIncrement());
         }
 
         this.getDonaciones().add(donacionConID);
@@ -51,6 +51,6 @@ public class InMemoryDonacionesRepository implements DonacionesRepository {
 
     @Override
     public void deleteById(String id) {
-        this.getDonaciones().removeIf(d -> d.getId().equals(id));
+        this.getDonaciones().removeIf(d -> d.getId().toString().equals(id));
     }
 }

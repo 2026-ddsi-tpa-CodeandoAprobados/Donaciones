@@ -25,7 +25,7 @@ public class CategoriaController {
 
         try{
             val categoriaDTO = new CategoriaDTO(
-                    null, categoriaRequest.getSubcategoriaID(), categoriaRequest.getNombre(), categoriaRequest.getDescripcion()
+                    null, categoriaRequest.getNombre(), categoriaRequest.getDescripcion()
             );
 
             val categoriaAgregadaDTO = fachada.agregarCategoria(categoriaDTO);

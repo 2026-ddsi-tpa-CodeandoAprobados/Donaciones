@@ -24,7 +24,7 @@ public class DetallesProductosDataMapper {
 
     private DetalleProductoDTO toDetalleProductoDTO(DetalleProducto detalleProducto){
         return new DetalleProductoDTO(
-                detalleProducto.getDetalleProductoID(),
+                detalleProducto.getDetalleProductoID().toString(),
                 detalleProducto.getProductoID(),
                 detalleProducto.getCantidadProducto()
         );

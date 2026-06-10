@@ -9,7 +9,7 @@ public interface IdentificadoresRepository {
 
     Identificador save(Identificador identificador);
 
-    Optional<Identificador> findByID(String id);
+    Optional<Identificador> findByID(Long id);
 
     List<Identificador> findAllIdentificadores();
 

@@ -7,7 +7,7 @@ import java.util.Optional;
 
 public interface DetallesProductosRepository   {
 
-    Optional<DetalleProducto> findById(String id);
+    Optional<DetalleProducto> findById(Long id);
 
     DetalleProducto saveOne(DetalleProducto detalleProducto);
 

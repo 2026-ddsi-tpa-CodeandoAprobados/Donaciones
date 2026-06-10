@@ -12,11 +12,11 @@ import java.time.LocalDate;
 import java.util.List;
 
 @Entity
-@Table(name = "Donaciones")
+@Table(name = "donaciones")
 public class Donacion{
 
     @Id @GeneratedValue(strategy = GenerationType.AUTO)
-    @Setter @Getter private String id;
+    @Setter @Getter private Long id;
 
     @Column(name = "donadorID" ,  nullable = false)
     @Setter @Getter private String donadorID;
@@ -31,11 +31,11 @@ public class Donacion{
     @Column(name = "estado" , nullable = false)
     @Setter @Getter private EstadoDonacionEnum estado;
 
-    @OneToMany
-    @JoinColumn(name = "detalleProductoID")
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "donacion_id")
     @Setter @Getter private List<DetalleProducto> detallesProductos;
 
-    @Column(nullable = false , length = 10)
+    @Column(nullable = false)
     @Setter @Getter private LocalDate fechaRegistro;
 
     public Donacion() {}
@@ -49,9 +49,8 @@ public class Donacion{
         this.setDonadorID(donadorID);
         this.setDepositoID(depositoID);
         this.setDescripcionDonacion(descripcionDonacion);
-        this.setDetallesProductos(detallesProductos);
         this.setEstado(estado);
-        this.fechaRegistro = LocalDate.now();
+        this.setFechaRegistro(LocalDate.now());
     }
 
     public Donacion modificarEstado(EstadoDonacionEnum nuevoEstado){

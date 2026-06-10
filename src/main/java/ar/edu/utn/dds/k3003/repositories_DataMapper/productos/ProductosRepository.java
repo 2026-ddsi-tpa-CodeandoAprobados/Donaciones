@@ -7,7 +7,7 @@ import java.util.Optional;
 
 public interface ProductosRepository {
 
-    Optional<Producto> findById(String id);
+    Optional<Producto> findById(Long id);
 
     Producto save(Producto producto);
 

@@ -23,7 +23,7 @@ public class DonacionesDataMapper {
 
     public DonacionDTO toDonacionDTO(Donacion donacion){
         return new DonacionDTO(
-                donacion.getId(),
+                donacion.getId().toString(),
                 donacion.getDonadorID(),
                 donacion.getDepositoID(),
                 donacion.getDescripcionDonacion(),

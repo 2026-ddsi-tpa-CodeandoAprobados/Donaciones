@@ -9,7 +9,7 @@ public interface CategoriasRepository {
 
     public Categoria save(Categoria categoria);
 
-    public Optional<Categoria> findById(String categoriaID);
+    public Optional<Categoria> findById(Long categoriaID);
 
     public void deleteById(String categoriaID);
 

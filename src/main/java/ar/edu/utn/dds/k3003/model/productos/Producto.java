@@ -9,7 +9,7 @@ import lombok.Setter;
 public class Producto {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Getter @Setter private String id;
+    @Getter @Setter private Long id;
 
     @Column(nullable = false)
     @Getter @Setter private String nombre;

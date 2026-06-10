@@ -56,8 +56,6 @@ import lombok.Setter;
 import lombok.val;
 import org.springframework.stereotype.Service;
 
-import static org.springframework.util.ObjectUtils.isEmpty;
-
 @Service
 public class Fachada implements FachadaDonaciones {
 
@@ -156,7 +154,7 @@ public class Fachada implements FachadaDonaciones {
 
     public Donacion donacionExistente(String donacionID) {
 
-        val donacionOpcional = this.donacionesRepository.findById(donacionID);
+        val donacionOpcional = this.donacionesRepository.findById(Long.valueOf(donacionID));
 
         this.donacionNoEncontrada(donacionOpcional);
 
@@ -193,12 +191,11 @@ public class Fachada implements FachadaDonaciones {
         if (productoOpcional.isEmpty()) {
             throw new ProductoInexistente("El producto no existe");
         }
-
     }
 
     private Producto productoExistente(String productoID) {
 
-        val productoOpcional = this.productosRepository.findById(productoID);
+        val productoOpcional = this.productosRepository.findById(Long.valueOf(productoID));
 
         this.productoNoExiste(productoOpcional);
 
@@ -212,7 +209,7 @@ public class Fachada implements FachadaDonaciones {
             throw new ProductoInvalido("El ID del producto es desconocida");
         }
 
-        if(this.productosRepository.findById(productoID).isEmpty()) {
+        if(this.productosRepository.findById(Long.valueOf(productoID)).isEmpty()) {
             throw new ProductoInexistente(STR."El producto con ID \{productoID} no existe");
         }
 
@@ -220,7 +217,7 @@ public class Fachada implements FachadaDonaciones {
 
     public void eliminarDonacion(String donacionID) {
 
-        val donacionAeliminar = this.donacionesRepository.findById(donacionID);
+        val donacionAeliminar = this.donacionesRepository.findById(Long.valueOf(donacionID));
 
         this.donacionNoEncontrada(donacionAeliminar);
 
@@ -255,11 +252,12 @@ public class Fachada implements FachadaDonaciones {
 
         this.fachadaLog.gestionarDonacion(
                 donacionGuardada.getDepositoID(),
-                donacionGuardada.getId(),
-                donacionGuardada.getDetallesProductos()
+                String.valueOf(donacionGuardada.getId()),
+                "donacionGuardada.getDetallesProductos()",
+                123
         );
 
-        this.historialEstadosRepository.save(donacionGuardada.getId(), donacionGuardada.getEstado());
+        this.historialEstadosRepository.save(String.valueOf(donacionGuardada.getId()), donacionGuardada.getEstado());
 
         return this.donacionesDataMapper.toDonacionDTO(donacionGuardada);
     }
@@ -278,7 +276,6 @@ public class Fachada implements FachadaDonaciones {
                 .anyMatch(detalleProductoDTO -> detalleProductoDTO.id() != null || detalleProductoDTO == null)){
             throw new DonacionNoSePuedeRegistrar("Detalles de productos inválidos.");
         }
-
     }
 
     private void validarProductos(List<DetalleProductoDTO> detallesProductosDTOs) {
@@ -321,7 +318,7 @@ public class Fachada implements FachadaDonaciones {
 
         val donacionModificable = this.donacionValidadaParaCambioEstado(donacionID, estado);
 
-        this.donacionesRepository.deleteById(donacionModificable.getId());
+        this.donacionesRepository.deleteById(String.valueOf(donacionModificable.getId()));
 
         val donacionModificada = (donacionModificable).modificarEstado(estado);
 
@@ -351,7 +348,7 @@ public class Fachada implements FachadaDonaciones {
         val donacionRegistrada = donacionExistente(donacionID);
 
         val quejaGestionable
-                = new QuejaDTO(null, donacionRegistrada.getId(), donacionRegistrada.getDonadorID(), LocalDate.now(), descripcion);
+                = new QuejaDTO(null, donacionRegistrada.getId().toString(), donacionRegistrada.getDonadorID(), LocalDate.now(), descripcion);
 
         this.fachadaDonadoresYEnt.agregarQueja(quejaGestionable);
 
@@ -361,7 +358,7 @@ public class Fachada implements FachadaDonaciones {
 
     public void identificadorExiste(String identificadorID) {
 
-        val identificadorOpcional = this.identificadoresRepository.findByID(identificadorID);
+        val identificadorOpcional = this.identificadoresRepository.findByID(Long.valueOf(identificadorID));
 
         if(identificadorOpcional.isEmpty()) {
             throw new IdentificadorNoEncontrado("El identificador no ha sido encontrado");
@@ -405,7 +402,7 @@ public class Fachada implements FachadaDonaciones {
 
     public void categoriaExiste(String categoriaID) {
 
-        val categoriaOpcional = this.categoriasRepository.findById(categoriaID);
+        val categoriaOpcional = this.categoriasRepository.findById(Long.valueOf(categoriaID));
 
         if(categoriaOpcional.isEmpty()) {
             throw new CategoriaNoEncontrada("La categoria no fue encontrada");
@@ -498,7 +495,7 @@ public class Fachada implements FachadaDonaciones {
 
     public Identificador identificadorExistente(String identificadorID) {
 
-        val identificadorOpcional = this.identificadoresRepository.findByID(identificadorID);
+        val identificadorOpcional = this.identificadoresRepository.findByID(Long.valueOf(identificadorID));
 
         if(identificadorOpcional.isEmpty()) {
             throw new IdentificadorNoEncontrado("El identificador no ha sido encontrado");
@@ -560,7 +557,7 @@ public class Fachada implements FachadaDonaciones {
     public void eliminarProducto(String productoID){
 
         val productoAeliminar =  this.productoExistente(productoID);
-        this.getProductosRepository().deleteById(productoAeliminar.getId());
+        this.getProductosRepository().deleteById(String.valueOf(productoAeliminar.getId()));
 
     }
 
