@@ -2,13 +2,13 @@
 # 🧪 2026 - Trabajo Práctico Anual
 
 ## 👤 Datos del Alumno
-- ** Nombre:Facundo **
-- ** Apellido:Fernandez **
+- *Nombre* : Facundo
+- *Apellido* : Fernandez
 
 ---
 
 🧩 Componente Desarrollado
-- ** Donaciones **
+- *Donaciones*
 
 ---
 
