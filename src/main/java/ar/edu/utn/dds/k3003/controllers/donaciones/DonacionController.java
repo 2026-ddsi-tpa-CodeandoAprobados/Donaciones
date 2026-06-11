@@ -30,7 +30,7 @@ public class DonacionController {
             DonacionDTO donacionResponse = fachada.registrarDonacion(donacionDTO);
             return ResponseEntity
                     .status(HttpStatusCode.valueOf(202))
-                    .body(donacionDTO);
+                    .body(donacionResponse);
         } catch (DonacionNoSePuedeRegistrar e) {
             return ResponseEntity
                     .status(HttpStatusCode.valueOf(401))
