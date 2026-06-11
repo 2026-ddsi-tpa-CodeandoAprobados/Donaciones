@@ -21,6 +21,7 @@ import ar.edu.utn.dds.k3003.exceptions.productos.ProductoDesconocido;
 import ar.edu.utn.dds.k3003.exceptions.productos.ProductoInexistente;
 import ar.edu.utn.dds.k3003.exceptions.productos.ProductoInvalido;
 import ar.edu.utn.dds.k3003.exceptions.productos.SinProductos;
+import ar.edu.utn.dds.k3003.model.categorias.Categoria;
 import ar.edu.utn.dds.k3003.model.donaciones.Donacion;
 
 import java.time.LocalDate;
@@ -31,26 +32,20 @@ import java.util.Optional;
 import ar.edu.utn.dds.k3003.model.identificadores.Identificador;
 import ar.edu.utn.dds.k3003.model.productos.DetalleProducto;
 import ar.edu.utn.dds.k3003.model.productos.Producto;
+import ar.edu.utn.dds.k3003.model.registroEstado.RegistroEstado;
 import ar.edu.utn.dds.k3003.repositories_DataMapper.categorias.CategoriasDataMapper;
 import ar.edu.utn.dds.k3003.repositories_DataMapper.categorias.CategoriasRepository;
-import ar.edu.utn.dds.k3003.repositories_DataMapper.categorias.InMemoryCateRepo;
 import ar.edu.utn.dds.k3003.repositories_DataMapper.donaciones.DonacionesDataMapper;
 import ar.edu.utn.dds.k3003.repositories_DataMapper.donaciones.DonacionesRepository;
-import ar.edu.utn.dds.k3003.repositories_DataMapper.donaciones.InMemoryDonacionesRepository;
 import ar.edu.utn.dds.k3003.repositories_DataMapper.historialEstados.HistorialEstadosDonacionRepository;
-import ar.edu.utn.dds.k3003.repositories_DataMapper.historialEstados.InMemoryHistorialDeEstadosRepo;
 import ar.edu.utn.dds.k3003.repositories_DataMapper.identificadores.IdentificadoresDataMapper;
 import ar.edu.utn.dds.k3003.repositories_DataMapper.identificadores.IdentificadoresRepository;
-import ar.edu.utn.dds.k3003.repositories_DataMapper.identificadores.InMemoryIdentificadorRepo;
 import ar.edu.utn.dds.k3003.repositories_DataMapper.productos.DetallesProductos.DetallesProductosDataMapper;
 import ar.edu.utn.dds.k3003.repositories_DataMapper.productos.DetallesProductos.DetallesProductosRepository;
-import ar.edu.utn.dds.k3003.repositories_DataMapper.productos.DetallesProductos.InMemoryDetalleProdRepository;
-import ar.edu.utn.dds.k3003.repositories_DataMapper.productos.InMemoryProdRepo;
 import ar.edu.utn.dds.k3003.repositories_DataMapper.productos.ProductosDataMapper;
 import ar.edu.utn.dds.k3003.repositories_DataMapper.productos.ProductosRepository;
 import ar.edu.utn.dds.k3003.repositories_DataMapper.subcategorias.SubcategoriasDataMapper;
 import ar.edu.utn.dds.k3003.repositories_DataMapper.subcategorias.SubcategoriasRepository;
-import ar.edu.utn.dds.k3003.repositories_DataMapper.subcategorias.InMemorySubcategoriaRepo;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.val;
@@ -92,14 +87,6 @@ public class Fachada implements FachadaDonaciones {
     @Getter @Setter private FachadaLogistica fachadaLog;
 
     public Fachada() {
-
-        this.identificadoresRepository = new InMemoryIdentificadorRepo();
-        this.donacionesRepository = new InMemoryDonacionesRepository();
-        this.historialEstadosRepository = new InMemoryHistorialDeEstadosRepo();
-        this.productosRepository = new InMemoryProdRepo();
-        this.categoriasRepository = new InMemoryCateRepo();
-        this.subcategoriasRepository = new InMemorySubcategoriaRepo();
-        this.detallesProductosRepository = new InMemoryDetalleProdRepository();
 
     }
 
@@ -212,16 +199,15 @@ public class Fachada implements FachadaDonaciones {
         if(this.productosRepository.findById(Long.valueOf(productoID)).isEmpty()) {
             throw new ProductoInexistente(STR."El producto con ID \{productoID} no existe");
         }
-
     }
 
-    public void eliminarDonacion(String donacionID) {
+    public void deleteDonacion(String donacionID) {
 
         val donacionAeliminar = this.donacionesRepository.findById(Long.valueOf(donacionID));
 
         this.donacionNoEncontrada(donacionAeliminar);
 
-        this.donacionesRepository.deleteById(donacionID);
+        this.donacionesRepository.delete(donacionAeliminar);
 
     }
 
@@ -257,7 +243,10 @@ public class Fachada implements FachadaDonaciones {
                 123
         );
 
-        this.historialEstadosRepository.save(String.valueOf(donacionGuardada.getId()), donacionGuardada.getEstado());
+        val nuevoRegistro =
+                new RegistroEstado(String.valueOf(donacionGuardada.getId()) , EstadoDonacionEnum.INGRESADA);
+
+        this.historialEstadosRepository.save(nuevoRegistro);
 
         return this.donacionesDataMapper.toDonacionDTO(donacionGuardada);
     }
@@ -273,7 +262,7 @@ public class Fachada implements FachadaDonaciones {
     private void validarDetallesProductos(List<DetalleProductoDTO> detallesProductosDTOs) {
 
         if (detallesProductosDTOs.stream()
-                .anyMatch(detalleProductoDTO -> detalleProductoDTO.id() != null || detalleProductoDTO == null)){
+                .anyMatch(detalleProductoDTO -> detalleProductoDTO.id() != null)){
             throw new DonacionNoSePuedeRegistrar("Detalles de productos inválidos.");
         }
     }
@@ -318,11 +307,13 @@ public class Fachada implements FachadaDonaciones {
 
         val donacionModificable = this.donacionValidadaParaCambioEstado(donacionID, estado);
 
-        this.donacionesRepository.deleteById(String.valueOf(donacionModificable.getId()));
+        this.donacionesRepository.deleteById(donacionModificable.getId());
 
         val donacionModificada = (donacionModificable).modificarEstado(estado);
 
-        this.historialEstadosRepository.save(donacionID, estado);
+        val nuevoRegistro = new RegistroEstado(donacionID, estado);
+
+        this.historialEstadosRepository.save(nuevoRegistro);
 
         val donacionGuardada = this.donacionesRepository.save(donacionModificada);
 
@@ -330,15 +321,20 @@ public class Fachada implements FachadaDonaciones {
     }
 
     @Override
-    public List<DonacionDTO> buscarPorDonadorYFechaInicio(String donadorID, LocalDate fecha) {
+    public List<DonacionDTO> findByDonadorYFechaInicio(String donadorID, LocalDate fecha) {
 
-        val donacionesOpcionales = this.donacionesRepository.filterByDateAndDonadorID(donadorID, fecha);
+        val donaciones = this.donacionesRepository.findAll();
 
-        if (donacionesOpcionales.isEmpty()) {
+        val donacionesCoincidentes = donaciones.
+                stream().
+                filter(d -> d.mismoDonador(donadorID) & d.cumpleConFecha(fecha)).
+                toList();
+
+        if (donacionesCoincidentes.isEmpty()) {
             throw new DonacionNoEncontrada("No hay ninguna donación que esté emparajada con el donador y fecha de inicio solicitados");
         }
 
-        return this.donacionesDataMapper.donacionesToDonacionesDTO(donacionesOpcionales);
+        return this.donacionesDataMapper.donacionesToDonacionesDTO(donacionesCoincidentes);
 
     }
 
@@ -358,7 +354,7 @@ public class Fachada implements FachadaDonaciones {
 
     public void identificadorExiste(String identificadorID) {
 
-        val identificadorOpcional = this.identificadoresRepository.findByID(Long.valueOf(identificadorID));
+        val identificadorOpcional = this.identificadoresRepository.findById(Long.valueOf(identificadorID));
 
         if(identificadorOpcional.isEmpty()) {
             throw new IdentificadorNoEncontrado("El identificador no ha sido encontrado");
@@ -383,9 +379,9 @@ public class Fachada implements FachadaDonaciones {
 
     public void eliminarCategoria(String categoriaID) {
 
-        this.categoriaExiste(categoriaID);
+        val categoriaExistente = this.categoriaExiste(categoriaID);
 
-        this.categoriasRepository.deleteById(categoriaID);
+        this.categoriasRepository.delete(categoriaExistente);
 
     }
 
@@ -400,13 +396,15 @@ public class Fachada implements FachadaDonaciones {
 
     }
 
-    public void categoriaExiste(String categoriaID) {
+    public Categoria categoriaExiste(String categoriaID) {
 
         val categoriaOpcional = this.categoriasRepository.findById(Long.valueOf(categoriaID));
 
         if(categoriaOpcional.isEmpty()) {
             throw new CategoriaNoEncontrada("La categoria no fue encontrada");
         }
+
+        return categoriaOpcional.get();
 
     }
 
@@ -495,7 +493,7 @@ public class Fachada implements FachadaDonaciones {
 
     public Identificador identificadorExistente(String identificadorID) {
 
-        val identificadorOpcional = this.identificadoresRepository.findByID(Long.valueOf(identificadorID));
+        val identificadorOpcional = this.identificadoresRepository.findById(Long.valueOf(identificadorID));
 
         if(identificadorOpcional.isEmpty()) {
             throw new IdentificadorNoEncontrado("El identificador no ha sido encontrado");
@@ -521,7 +519,7 @@ public class Fachada implements FachadaDonaciones {
     public void eliminarIdentificador(String identificadorID) {
 
         this.identificadorExiste(identificadorID);
-        this.identificadoresRepository.deleteById(identificadorID);
+        this.identificadoresRepository.deleteById(Long.valueOf(identificadorID));
     }
 
     public List<ProductoDTO> findAllProductos(){
@@ -557,7 +555,7 @@ public class Fachada implements FachadaDonaciones {
     public void eliminarProducto(String productoID){
 
         val productoAeliminar =  this.productoExistente(productoID);
-        this.getProductosRepository().deleteById(String.valueOf(productoAeliminar.getId()));
+        this.productosRepository.deleteById(Long.valueOf(productoID));
 
     }
 
@@ -572,7 +570,7 @@ public class Fachada implements FachadaDonaciones {
 
     public List<IdentificadorDTO> findAllIdentificadores(){
 
-        val identificadores = this.identificadoresRepository.findAllIdentificadores();
+        val identificadores = this.identificadoresRepository.findAll();
 
         if(identificadores.isEmpty()) {
             throw new SinIdentificadores("El sistema no tiene identificadores cargados");

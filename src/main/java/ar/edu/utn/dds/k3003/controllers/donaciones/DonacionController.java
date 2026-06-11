@@ -78,7 +78,7 @@ public class DonacionController {
     public ResponseEntity<Void> deleteDonacion(@PathVariable("id") String donacionID) {
 
         try {
-            fachada.eliminarDonacion(donacionID);
+            fachada.deleteDonacion(donacionID);
             return ResponseEntity
                     .noContent()
                     .build();
@@ -97,7 +97,7 @@ public class DonacionController {
     )
         {
             try{
-                List<DonacionDTO> donacionesDTO = fachada.buscarPorDonadorYFechaInicio(donadorID, fechaInicio);
+                List<DonacionDTO> donacionesDTO = fachada.findByDonadorYFechaInicio(donadorID, fechaInicio);
                 return ResponseEntity
                         .status(HttpStatusCode.valueOf(200))
                         .body(donacionesDTO);
