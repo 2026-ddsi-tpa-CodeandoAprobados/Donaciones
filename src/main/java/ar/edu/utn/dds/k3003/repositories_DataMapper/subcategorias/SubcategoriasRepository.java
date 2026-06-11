@@ -7,6 +7,4 @@ import java.util.List;
 import java.util.Optional;
 
 public interface SubcategoriasRepository extends JpaRepository<Subcategoria , Long> {
-
-
 }

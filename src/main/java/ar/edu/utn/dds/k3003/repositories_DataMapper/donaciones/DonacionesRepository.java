@@ -8,5 +8,4 @@ import java.util.List;
 import java.util.Optional;
 
 public interface DonacionesRepository extends JpaRepository<Donacion , Long> {
-
 }

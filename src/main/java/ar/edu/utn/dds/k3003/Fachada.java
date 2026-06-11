@@ -203,9 +203,11 @@ public class Fachada implements FachadaDonaciones {
 
     public void deleteDonacion(String donacionID) {
 
-        val donacionAeliminar = this.donacionesRepository.findById(Long.valueOf(donacionID));
+        val donacionOpcionalAeliminar = this.donacionesRepository.findById(Long.valueOf(donacionID));
 
-        this.donacionNoEncontrada(donacionAeliminar);
+        this.donacionNoEncontrada(donacionOpcionalAeliminar);
+
+        val donacionAeliminar = donacionOpcionalAeliminar.get();
 
         this.donacionesRepository.delete(donacionAeliminar);
 

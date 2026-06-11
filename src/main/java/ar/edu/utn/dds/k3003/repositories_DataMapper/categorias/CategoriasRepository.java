@@ -14,10 +14,4 @@ import java.util.Optional;
 
 @Repository
 public interface CategoriasRepository extends JpaRepository<Categoria , Long> {
-
-
-
-
-
-
 }

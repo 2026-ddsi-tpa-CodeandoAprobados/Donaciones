@@ -7,7 +7,4 @@ import java.util.List;
 import java.util.Optional;
 
 public interface DetallesProductosRepository extends JpaRepository<DetalleProducto , Long> {
-
-    List<DetalleProducto> saveAll(List<DetalleProducto> detalleProductos);
-
 }
