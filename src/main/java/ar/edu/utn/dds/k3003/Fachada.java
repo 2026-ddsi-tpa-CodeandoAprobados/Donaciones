@@ -197,7 +197,7 @@ public class Fachada implements FachadaDonaciones {
         }
 
         if(this.productosRepository.findById(Long.valueOf(productoID)).isEmpty()) {
-            throw new ProductoInexistente(STR."El producto con ID \{productoID} no existe");
+            throw new ProductoInexistente("El producto con ID " + productoID + " no existe");
         }
     }
 
