@@ -12,9 +12,9 @@
 
 ---
 
-🧩 Link al despliegue en Render
--
-
+🧩 Link al despliegue en Render y SwaggerHub
+- 
+- https://app.swaggerhub.com/apis/universidadtecnologi-070/Donaciones/1.0.0
 ---
 
 ### ⚠️ Importante
