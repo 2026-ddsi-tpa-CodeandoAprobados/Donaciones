@@ -26,13 +26,13 @@ public class Producto {
     public Producto(
         String nombre,
         String descripcion,
-        String categoriaID,
+        String subcategoriaID,
         String identificadorID
     )
         {
             this.setNombre(nombre);
             this.setDescripcion(descripcion);
-            this.setSubcategoriaID(categoriaID);
+            this.setSubcategoriaID(subcategoriaID);
             this.setIdentificadorID(identificadorID);
         }
 
