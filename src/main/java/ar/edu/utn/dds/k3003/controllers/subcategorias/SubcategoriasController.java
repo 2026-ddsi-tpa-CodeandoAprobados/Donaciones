@@ -68,7 +68,6 @@ public class SubcategoriasController {
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteSubcategoriaById(@PathVariable("id") String subcategoriaID){
         try{
-
             this.fachada.deleteSubcategoriaById(subcategoriaID);
 
             return  ResponseEntity.status(HttpStatusCode.valueOf(204)).body(null);

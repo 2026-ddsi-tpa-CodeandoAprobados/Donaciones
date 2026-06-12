@@ -1,6 +1,7 @@
 package ar.edu.utn.dds.k3003.repositories_DataMapper.productos.DetallesProductos;
 
 import ar.edu.utn.dds.k3003.catedra.dtos.donaciones.DetalleProductoDTO;
+import ar.edu.utn.dds.k3003.controllers.donaciones.DetalleProductoRequest;
 import ar.edu.utn.dds.k3003.model.productos.DetalleProducto;
 import org.springframework.stereotype.Component;
 
@@ -30,6 +31,11 @@ public class DetallesProductosDataMapper {
                 detalleProducto.getProductoID(),
                 detalleProducto.getCantidadProducto()
         );
+    }
+
+    public List<DetalleProductoDTO> fromRequestsToDTOs(List<DetalleProductoRequest> detallesProductoRequests){
+        return detallesProductoRequests.stream().map(d ->
+                new DetalleProductoDTO(null, d.productoID(), d.cantidadProducto())).toList();
     }
 
 }

@@ -8,6 +8,7 @@ import ar.edu.utn.dds.k3003.exceptions.donaciones.DonacionNoEncontrada;
 import ar.edu.utn.dds.k3003.exceptions.donaciones.DonacionNoSePuedeRegistrar;
 import ar.edu.utn.dds.k3003.exceptions.donaciones.SinDonaciones;
 import ar.edu.utn.dds.k3003.exceptions.donadores.DonadorNoEncontrado;
+import lombok.val;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
@@ -24,9 +25,14 @@ public class DonacionController {
     @Autowired private Fachada fachada;
 
     @PostMapping
-    public ResponseEntity<DonacionDTO> createDonacion(@RequestBody DonacionDTO donacionDTO) {
+    public ResponseEntity<DonacionDTO> createDonacion(@RequestBody DonacionRequest donacionRequest) {
 
         try {
+            val detallesProductosDTOs = fachada.detallesFromRequestToDTOs(donacionRequest.detallesProductosRequest());
+
+            val donacionDTO =
+                    new DonacionDTO(null, donacionRequest.donadorID(), donacionRequest.depositoID(), donacionRequest.descripcion(), detallesProductosDTOs, null);
+
             DonacionDTO donacionResponse = fachada.registrarDonacion(donacionDTO);
             return ResponseEntity
                     .status(HttpStatusCode.valueOf(202))
@@ -34,11 +40,11 @@ public class DonacionController {
         } catch (DonacionNoSePuedeRegistrar e) {
             return ResponseEntity
                     .status(HttpStatusCode.valueOf(401))
-                    .body(donacionDTO);
+                    .body(null);
         } catch (DonadorNoEncontrado e) {
             return ResponseEntity
                     .status(HttpStatusCode.valueOf(404))
-                    .body(donacionDTO);
+                    .body(null);
         }
 
     }
@@ -108,6 +114,20 @@ public class DonacionController {
             }
         }
 
+    @GetMapping("/search/{donadorID}")
+    public ResponseEntity<List<DonacionDTO>> findDonacionesByDonadorID (@PathVariable("donadorID") String donadorID) {
+        try{
+            List<DonacionDTO> donacionesDTOs = fachada.findDonacionesByDonadorID(donadorID);
+            return ResponseEntity
+                    .status(HttpStatusCode.valueOf(200))
+                    .body(donacionesDTOs);
+        }catch(DonacionNoEncontrada e){
+            return ResponseEntity
+                    .status(HttpStatusCode.valueOf(404))
+                    .body(null);
+        }
+    }
+
     @PatchMapping("/{id}/estado")
     public ResponseEntity<DonacionDTO> actualizarEstadoDonacion(
             @PathVariable("id") String donacionID,
@@ -135,11 +155,11 @@ public class DonacionController {
     @PostMapping("/{id}/queja")
     public ResponseEntity<DonacionDTO> registrarQueja(
             @PathVariable("id")  String donacionID,
-            @RequestBody String descripcionQueja
+            @RequestBody QuejaRequest quejaRequest
     )
     {
         try{
-            DonacionDTO donacionModificada =  fachada.registrarQuejaEnDonacion(donacionID,descripcionQueja);
+            DonacionDTO donacionModificada =  fachada.registrarQuejaEnDonacion(donacionID,quejaRequest.descripcion());
             return ResponseEntity
                     .status(HttpStatusCode.valueOf(201))
                     .body(donacionModificada);

@@ -8,6 +8,7 @@ import ar.edu.utn.dds.k3003.catedra.dtos.donadoresYEntidades.QuejaDTO;
 import ar.edu.utn.dds.k3003.catedra.fachadas.FachadaDonaciones;
 import ar.edu.utn.dds.k3003.catedra.fachadas.FachadaDonadoresYEntidades;
 import ar.edu.utn.dds.k3003.catedra.fachadas.FachadaLogistica;
+import ar.edu.utn.dds.k3003.controllers.donaciones.DetalleProductoRequest;
 import ar.edu.utn.dds.k3003.exceptions.categorias.*;
 import ar.edu.utn.dds.k3003.exceptions.donaciones.*;
 import ar.edu.utn.dds.k3003.exceptions.donadores.DonadorNoEncontrado;
@@ -349,6 +350,22 @@ public class Fachada implements FachadaDonaciones {
 
     }
 
+    public List<DonacionDTO> findDonacionesByDonadorID(String donadorID){
+
+        val donaciones = this.donacionesRepository.findAll();
+
+        val donacionesCoincidentes = donaciones.
+                stream().
+                filter(d -> d.mismoDonador(donadorID)).
+                toList();
+
+        if(donacionesCoincidentes.isEmpty()) {
+            throw new DonacionNoEncontrada("No hay ninguana donación que esté emparajada con el donador brindado");
+        }
+
+        return this.donacionesDataMapper.donacionesToDonacionesDTO(donacionesCoincidentes);
+    }
+
     @Override
     public DonacionDTO registrarQuejaEnDonacion(String donacionID, String descripcion) {
 
@@ -497,6 +514,11 @@ public class Fachada implements FachadaDonaciones {
         }
 
         return subcategorias.stream().map(s -> this.subcategoriasDataMapper.toSubcategoriaDTO(s)).toList();
+
+    }
+
+    public List<DetalleProductoDTO> detallesFromRequestToDTOs(List<DetalleProductoRequest> detallesProductosRequest) {
+        return this.detallesProductosDataMapper.fromRequestsToDTOs(detallesProductosRequest);
 
     }
 
