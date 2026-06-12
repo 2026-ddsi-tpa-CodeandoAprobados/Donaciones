@@ -11,7 +11,7 @@ public class ProductosDataMapper{
             producto.getId().toString(),
             producto.getNombre(),
             producto.getDescripcion(),
-            producto.getCategoriaID(),
+            producto.getSubcategoriaID(),
             producto.getIdentificadorID()
         );
     }
@@ -21,7 +21,7 @@ public class ProductosDataMapper{
         return new Producto(
                 productoDTO.nombre(),
                 productoDTO.descripcion(),
-                productoDTO.categoriaID(),
+                productoDTO.subcategoriaID(),
                 productoDTO.identificadorID()
         );
     }
