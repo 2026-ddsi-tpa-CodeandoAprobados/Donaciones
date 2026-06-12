@@ -3,13 +3,18 @@ package ar.edu.utn.dds.k3003.repositories_DataMapper.donaciones;
 import ar.edu.utn.dds.k3003.catedra.dtos.donaciones.DonacionDTO;
 import ar.edu.utn.dds.k3003.model.donaciones.Donacion;
 import ar.edu.utn.dds.k3003.repositories_DataMapper.productos.DetallesProductos.DetallesProductosDataMapper;
-import lombok.Getter;
+import org.springframework.stereotype.Component;
 
 import java.util.List;
 
+@Component
 public class DonacionesDataMapper {
 
-    @Getter DetallesProductosDataMapper detallesProductosDataMapper = new DetallesProductosDataMapper();
+    private final DetallesProductosDataMapper detallesProductosDataMapper;
+
+    public DonacionesDataMapper(DetallesProductosDataMapper detallesProductosDataMapper) {
+        this.detallesProductosDataMapper = detallesProductosDataMapper;
+    }
 
     public Donacion toDonacion(DonacionDTO donacionDTO){
 
@@ -27,7 +32,7 @@ public class DonacionesDataMapper {
                 donacion.getDonadorID(),
                 donacion.getDepositoID(),
                 donacion.getDescripcionDonacion(),
-                this.getDetallesProductosDataMapper().toDetallesProductoDTOs(donacion.getDetallesProductos()),
+                this.detallesProductosDataMapper.toDetallesProductoDTOs(donacion.getDetallesProductos()),
                 donacion.getEstado()
         );
     }

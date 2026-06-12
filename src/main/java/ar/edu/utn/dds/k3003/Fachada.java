@@ -51,38 +51,53 @@ import ar.edu.utn.dds.k3003.repositories_DataMapper.subcategorias.SubcategoriasR
 import lombok.Getter;
 import lombok.Setter;
 import lombok.val;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
 public class Fachada implements FachadaDonaciones {
 
+    @Autowired
     @Getter @Setter private DonacionesRepository donacionesRepository;
 
+    @Autowired
     @Getter @Setter private HistorialEstadosDonacionRepository historialEstadosRepository;
 
+    @Autowired
     @Getter @Setter private ProductosRepository productosRepository;
 
+    @Autowired
     @Getter @Setter private IdentificadoresRepository identificadoresRepository;
 
+    @Autowired
     @Getter @Setter private CategoriasRepository categoriasRepository;
 
+    @Autowired
     @Getter @Setter private SubcategoriasRepository subcategoriasRepository;
 
+    @Autowired
     @Getter @Setter private DonacionesRepository donacionRepository;
 
+    @Autowired
     @Getter @Setter private DetallesProductosRepository detallesProductosRepository;
 
-    @Getter @Setter private DonacionesDataMapper donacionesDataMapper = new DonacionesDataMapper();
+    @Autowired
+    @Getter @Setter private DonacionesDataMapper donacionesDataMapper;
 
-    @Getter @Setter private ProductosDataMapper productoDataMapper = new ProductosDataMapper();
+    @Autowired
+    @Getter @Setter private ProductosDataMapper productoDataMapper;
 
-    @Getter @Setter private IdentificadoresDataMapper identificadoresDataMapper = new IdentificadoresDataMapper();
+    @Autowired
+    @Getter @Setter private IdentificadoresDataMapper identificadoresDataMapper;
 
-    @Getter @Setter private CategoriasDataMapper categoriasDataMapper = new CategoriasDataMapper();
+    @Autowired
+    @Getter @Setter private CategoriasDataMapper categoriasDataMapper;
 
-    @Getter @Setter private SubcategoriasDataMapper subcategoriasDataMapper = new SubcategoriasDataMapper();
+    @Autowired
+    @Getter @Setter private SubcategoriasDataMapper subcategoriasDataMapper;
 
-    @Getter @Setter private DetallesProductosDataMapper detallesProductosDataMapper = new DetallesProductosDataMapper();
+    @Autowired
+    @Getter @Setter private DetallesProductosDataMapper detallesProductosDataMapper;
 
     @Getter @Setter private FachadaDonadoresYEntidades fachadaDonadoresYEnt;
 

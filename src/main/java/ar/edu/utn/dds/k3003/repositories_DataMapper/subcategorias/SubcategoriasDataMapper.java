@@ -2,7 +2,9 @@ package ar.edu.utn.dds.k3003.repositories_DataMapper.subcategorias;
 
 import ar.edu.utn.dds.k3003.catedra.dtos.donaciones.SubcategoriaDTO;
 import ar.edu.utn.dds.k3003.model.subcategorias.Subcategoria;
+import org.springframework.stereotype.Component;
 
+@Component
 public class SubcategoriasDataMapper {
 
     public SubcategoriaDTO toSubcategoriaDTO(Subcategoria subcategoria){

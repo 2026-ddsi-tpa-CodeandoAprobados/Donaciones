@@ -2,7 +2,9 @@ package ar.edu.utn.dds.k3003.repositories_DataMapper.identificadores;
 
 import ar.edu.utn.dds.k3003.catedra.dtos.donaciones.IdentificadorDTO;
 import ar.edu.utn.dds.k3003.model.identificadores.Identificador;
+import org.springframework.stereotype.Component;
 
+@Component
 public class IdentificadoresDataMapper {
 
     public Identificador toIdentificador(IdentificadorDTO identificadorDTO) {

@@ -2,7 +2,9 @@ package ar.edu.utn.dds.k3003.repositories_DataMapper.historialEstados;
 
 import ar.edu.utn.dds.k3003.model.registroEstado.RegistroEstado;
 import ar.edu.utn.dds.k3003.catedra.dtos.donaciones.RegistroEstadoDTO;
+import org.springframework.stereotype.Component;
 
+@Component
 public class RegistroDeEstadoDataMapper {
 
     public RegistroEstadoDTO toRegistroDTO(RegistroEstado registro) {

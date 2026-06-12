@@ -2,7 +2,9 @@ package ar.edu.utn.dds.k3003.repositories_DataMapper.categorias;
 
 import ar.edu.utn.dds.k3003.catedra.dtos.donaciones.CategoriaDTO;
 import ar.edu.utn.dds.k3003.model.categorias.Categoria;
+import org.springframework.stereotype.Component;
 
+@Component
 public class CategoriasDataMapper {
 
     public CategoriaDTO toCategoriaDTO(Categoria categoria){
