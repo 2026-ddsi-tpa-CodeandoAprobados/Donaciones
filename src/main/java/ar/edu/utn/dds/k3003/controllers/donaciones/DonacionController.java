@@ -31,7 +31,7 @@ public class DonacionController {
             val detallesProductosDTOs = fachada.detallesFromRequestToDTOs(donacionRequest.detallesProductosRequest());
 
             val donacionDTO =
-                    new DonacionDTO(null, donacionRequest.donadorID(), donacionRequest.depositoID(), donacionRequest.descripcion(), detallesProductosDTOs, null);
+                    new DonacionDTO(null, donacionRequest.donadorID(), donacionRequest.depositoID(), donacionRequest.descripcion(), detallesProductosDTOs, null,  null);
 
             DonacionDTO donacionResponse = fachada.registrarDonacion(donacionDTO);
             return ResponseEntity

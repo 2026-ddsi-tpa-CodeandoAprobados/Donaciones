@@ -33,7 +33,8 @@ public class DonacionesDataMapper {
                 donacion.getDepositoID(),
                 donacion.getDescripcionDonacion(),
                 this.detallesProductosDataMapper.toDetallesProductoDTOs(donacion.getDetallesProductos()),
-                donacion.getEstado()
+                donacion.getEstado(),
+                donacion.getFechaRegistro()
         );
     }
 
