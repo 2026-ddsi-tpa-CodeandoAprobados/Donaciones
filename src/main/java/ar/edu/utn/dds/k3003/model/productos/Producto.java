@@ -18,7 +18,7 @@ public class Producto {
     @Getter @Setter private String descripcion;
 
     @Column(nullable = false)
-    @Getter @Setter private String categoriaID;
+    @Getter @Setter private String subcategoriaID;
 
     @Column(nullable = false)
     @Getter @Setter private String identificadorID;
@@ -32,7 +32,7 @@ public class Producto {
         {
             this.setNombre(nombre);
             this.setDescripcion(descripcion);
-            this.setCategoriaID(categoriaID);
+            this.setSubcategoriaID(categoriaID);
             this.setIdentificadorID(identificadorID);
         }
 

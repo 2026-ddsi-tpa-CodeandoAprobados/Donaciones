@@ -11,6 +11,7 @@ import ar.edu.utn.dds.k3003.catedra.fachadas.FachadaLogistica;
 import ar.edu.utn.dds.k3003.exceptions.categorias.CategoriaDesconocida;
 import ar.edu.utn.dds.k3003.exceptions.categorias.CategoriaNoEncontrada;
 import ar.edu.utn.dds.k3003.exceptions.categorias.SinCategorias;
+import ar.edu.utn.dds.k3003.exceptions.categorias.SubcategoriaDesconocida;
 import ar.edu.utn.dds.k3003.exceptions.donaciones.*;
 import ar.edu.utn.dds.k3003.exceptions.donadores.DonadorNoEncontrado;
 import ar.edu.utn.dds.k3003.exceptions.identificadores.IdentificadorDesconocido;
@@ -33,6 +34,7 @@ import ar.edu.utn.dds.k3003.model.identificadores.Identificador;
 import ar.edu.utn.dds.k3003.model.productos.DetalleProducto;
 import ar.edu.utn.dds.k3003.model.productos.Producto;
 import ar.edu.utn.dds.k3003.model.registroEstado.RegistroEstado;
+import ar.edu.utn.dds.k3003.model.subcategorias.Subcategoria;
 import ar.edu.utn.dds.k3003.repositories_DataMapper.categorias.CategoriasDataMapper;
 import ar.edu.utn.dds.k3003.repositories_DataMapper.categorias.CategoriasRepository;
 import ar.edu.utn.dds.k3003.repositories_DataMapper.donaciones.DonacionesDataMapper;
@@ -86,9 +88,7 @@ public class Fachada implements FachadaDonaciones {
 
     @Getter @Setter private FachadaLogistica fachadaLog;
 
-    public Fachada() {
-
-    }
+    public Fachada() {}
 
     public void cambioEstadoValido(Donacion donacion, EstadoDonacionEnum estado) {
 
@@ -410,6 +410,15 @@ public class Fachada implements FachadaDonaciones {
 
     }
 
+    public void subcategoriaExiste(String subcategoriaID) {
+
+        val subcategoriaOpcional = this.subcategoriasRepository.findById(Long.valueOf(subcategoriaID));
+
+        if(subcategoriaOpcional.isEmpty()) {
+            throw new SubcategoriaDesconocida(  "La subcategoria no fue encontrada");
+        }
+    }
+
     public void categoriaDesconocida(CategoriaDTO categoriaDTO) {
 
         if(categoriaDTO == null){
@@ -430,11 +439,13 @@ public class Fachada implements FachadaDonaciones {
 
     }
 
-    public void categoriaDeProdExiste(ProductoDTO productoDTO) {
+    public void subcategoriaDeProdExiste(ProductoDTO productoDTO) {
 
-        if(productoDTO.categoriaID() != null) {
-            this.categoriaExiste(productoDTO.categoriaID());
+        if(productoDTO.subcategoriaID() == null) {
+            throw new SubcategoriaDesconocida("La subcategoría no puede ser desconocida");
         }
+
+        this.subcategoriaExiste(productoDTO.subcategoriaID());
     }
 
     public void identificadorDeProdExiste(ProductoDTO productoDTO) {
@@ -443,9 +454,7 @@ public class Fachada implements FachadaDonaciones {
             throw new IdentificadorDesconocido("El identificador no puede ser desconocido");
         }
 
-        val identificadorID = productoDTO.identificadorID();
-
-        this.identificadorExiste(identificadorID);
+        this.identificadorExiste(productoDTO.identificadorID());
     }
 
     public void validarProducto(ProductoDTO productoDTO) {
@@ -454,7 +463,7 @@ public class Fachada implements FachadaDonaciones {
             throw new ProductoDesconocido("El producto brindado es invalido");
         }
 
-        this.categoriaDeProdExiste(productoDTO);
+        this.subcategoriaDeProdExiste(productoDTO);
 
         this.identificadorDeProdExiste(productoDTO);
 
@@ -544,7 +553,7 @@ public class Fachada implements FachadaDonaciones {
 
         val productoDTOconID = new ProductoDTO(
                 productoID, productoDTOsinID.nombre(),
-                productoDTOsinID.descripcion(),productoDTOsinID.categoriaID(),
+                productoDTOsinID.descripcion(),productoDTOsinID.subcategoriaID(),
                 productoDTOsinID.identificadorID());
 
         val productoAguardar = this.productoDataMapper.toProducto(productoDTOconID);
@@ -557,7 +566,7 @@ public class Fachada implements FachadaDonaciones {
     public void eliminarProducto(String productoID){
 
         val productoAeliminar =  this.productoExistente(productoID);
-        this.productosRepository.deleteById(Long.valueOf(productoID));
+        this.productosRepository.delete(productoAeliminar);
 
     }
 
