@@ -1,0 +1,103 @@
+
+{
+  "objeto" : "Categoria",
+  "nombre": "Vestimenta",
+  "descripcion": "Categoria perteneciente a todos los productos que sean de vestimenta",
+  "id_generado_al_enviar_request" : "5"
+}
+
+{
+  "objeto" : "Categoria",
+  "nombre": "Juguetes",
+  "descripcion": "Categoria perteneciente a todos los productos que sean juguetes",
+  "id_generado_al_enviar_request" : "6"
+}
+
+{
+
+  "objeto" : "Categoria",
+  "nombre": "Alimentos",
+  "descripcion": "Categoria perteneciente a todos los productos que sean alimentos",
+  "id_generado_al_enviar_request" : "7"
+}
+
+{
+  "objeto" : "Categoria",
+  "nombre" : "Bebidas",
+  "descripcion" : "Categoria perteneciente a todos los productos que sean bebidas",
+  "id_generado_al_enviar_request" : "9"
+
+}
+
+{
+  "objeto" : "Subcategoria",
+  "descripcion": "Esta subcategoria pertenece a la categoria juguetes",
+  "nombre": "Max Steel",
+  "categoriaID": "6",
+  "id_generado_al_enviar_request": "1"
+
+}
+
+{
+  "objeto" : "Subcategoria",
+  "descripcion": "Esta subcategoria pertenece a la categoria juguetes",
+  "nombre": "Pelota de Futbol",
+  "categoriaID": "6",
+  "id_generado_al_enviar_request": "2"
+}
+
+{
+  "objeto" : "Subcategoria",
+  "descripcion" : "Esta subcategoria pertenece a la categoria juguetes",
+  "nombre" : "Cartas",
+  "categoriaID": "6",
+  "id_generado_al_enviar_request" : "3"
+}
+
+{
+  "objeto" : "Subcategoria",
+  "descripcion" : "Esta subcategoria pertenece a la categoria juguetes",
+  "nombre" : "Cartas",
+  "categoriaID": "6",
+  "id_generado_al_enviar_request" : "3"
+}
+
+{
+  "objeto" : "Subcategoria",
+  "descripcion" : "Esta subcategoria pertenece a la categoria Vestimenta",
+  "nombre" : "Pantalon",
+  "categoriaID": "5",
+  "id_generado_al_enviar_request" : "4"
+}
+
+{
+ "objeto" : "Subcategoria",
+  "descripcion" : "Esta subcategoria pertenece a la categoria Vestimenta",
+  "nombre" : "Camiseta",
+  "categoriaID": "5",
+  "id_generado_al_enviar_request" : "5"
+}
+
+{
+  "objeto" : "Subcategoria",
+  "descripcion" : "Esta subcategoria pertenece a la categoria Vestimenta",
+  "nombre" : "Campera",
+  "categoriaID": "5",
+  "id_generado_al_enviar_request" : "6"
+}
+
+{
+  "objeto" : "Subcategoria",
+  "descripcion" : "Esta subcategoria pertenece a la categoria Alimentos",
+  "nombre" : "Fideos",
+  "categoriaID": "7",
+  "id_generado_al_enviar_request" : 
+}
+
+{
+  "objeto" : "Subcategoria",
+  "descripcion" : "Esta subcategoria pertenece a la categoria Alimentos",
+  "nombre" : "Carne",
+  "categoriaID": "7",
+  "id_generado_al_enviar_request" : 
+}
