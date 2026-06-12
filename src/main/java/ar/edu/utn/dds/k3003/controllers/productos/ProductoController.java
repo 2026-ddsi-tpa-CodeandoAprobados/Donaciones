@@ -32,7 +32,7 @@ public class ProductoController {
         try{
             val productoDTO = new ProductoDTO(
                  null, productoRequest.getNombre(),
-                    productoRequest.getDescripcion(), productoRequest.getCategoriaID(),
+                    productoRequest.getDescripcion(), productoRequest.getSubcategoriaID(),
                     productoRequest.getIdentificadorID());
 
             val productoAgregadoDTO = fachada.agregarProducto(productoDTO);
@@ -79,17 +79,17 @@ public class ProductoController {
 
         try {
             val productoDTO = new ProductoDTO(productoID, productoRequest.getNombre(),
-                    productoRequest.getDescripcion(), productoRequest.getCategoriaID(), productoRequest.getIdentificadorID());
+                    productoRequest.getDescripcion(), productoRequest.getSubcategoriaID(), productoRequest.getIdentificadorID());
 
             val productoRegistradoDTO = fachada.modificarProducto(productoID, productoDTO);
 
-            return ResponseEntity.ok(productoRegistradoDTO); // .ok() es más limpio que HttpStatus.valueOf(200)
+            return ResponseEntity.ok(productoRegistradoDTO);
 
         } catch (ProductoInexistente e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null); // 404
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
 
         } catch (ProductoInvalido e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null); // CORRECCIÓN: 400 Bad Request
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
         }
     }
 

@@ -8,10 +8,7 @@ import ar.edu.utn.dds.k3003.catedra.dtos.donadoresYEntidades.QuejaDTO;
 import ar.edu.utn.dds.k3003.catedra.fachadas.FachadaDonaciones;
 import ar.edu.utn.dds.k3003.catedra.fachadas.FachadaDonadoresYEntidades;
 import ar.edu.utn.dds.k3003.catedra.fachadas.FachadaLogistica;
-import ar.edu.utn.dds.k3003.exceptions.categorias.CategoriaDesconocida;
-import ar.edu.utn.dds.k3003.exceptions.categorias.CategoriaNoEncontrada;
-import ar.edu.utn.dds.k3003.exceptions.categorias.SinCategorias;
-import ar.edu.utn.dds.k3003.exceptions.categorias.SubcategoriaDesconocida;
+import ar.edu.utn.dds.k3003.exceptions.categorias.*;
 import ar.edu.utn.dds.k3003.exceptions.donaciones.*;
 import ar.edu.utn.dds.k3003.exceptions.donadores.DonadorNoEncontrado;
 import ar.edu.utn.dds.k3003.exceptions.identificadores.IdentificadorDesconocido;
@@ -393,9 +390,9 @@ public class Fachada implements FachadaDonaciones {
 
     public void eliminarCategoria(String categoriaID) {
 
-        val categoriaExistente = this.categoriaExiste(categoriaID);
+        val categoriaAeliminar = this.categoriaExistente(categoriaID);
 
-        this.categoriasRepository.delete(categoriaExistente);
+        this.categoriasRepository.delete(categoriaAeliminar);
 
     }
 
@@ -410,7 +407,16 @@ public class Fachada implements FachadaDonaciones {
 
     }
 
-    public Categoria categoriaExiste(String categoriaID) {
+    public void categoriaExiste(String categoriaID){
+
+        val categoriaOpcional = this.categoriasRepository.findById(Long.valueOf(categoriaID));
+
+        if(categoriaOpcional.isEmpty()) {
+            throw new CategoriaNoEncontrada("La categoria asociada a la subcategoria no existe");
+        }
+    }
+
+    public Categoria categoriaExistente(String categoriaID) {
 
         val categoriaOpcional = this.categoriasRepository.findById(Long.valueOf(categoriaID));
 
@@ -431,7 +437,26 @@ public class Fachada implements FachadaDonaciones {
         }
     }
 
-    public void categoriaDesconocida(CategoriaDTO categoriaDTO) {
+    public void subcategoriaDeProdExiste(ProductoDTO productoDTO) {
+
+        if (productoDTO.subcategoriaID() == null) {
+            throw new SubcategoriaDesconocida("La subcategoría no puede ser desconocida");
+        }
+    }
+
+    public Subcategoria subcategoriaExistente(String subcategoriaID) {
+
+        val subcategoriaOpcional = this.subcategoriasRepository.findById(Long.valueOf(subcategoriaID));
+
+        if(subcategoriaOpcional.isEmpty()) {
+            throw new SubcategoriaNoEncontrada("La subcategoria no fue encontrada");
+        }
+
+        return subcategoriaOpcional.get();
+
+    }
+
+        public void categoriaDesconocida(CategoriaDTO categoriaDTO) {
 
         if(categoriaDTO == null){
             throw new CategoriaDesconocida("La categoria no puede ser nula");
@@ -451,13 +476,44 @@ public class Fachada implements FachadaDonaciones {
 
     }
 
-    public void subcategoriaDeProdExiste(ProductoDTO productoDTO) {
+    public SubcategoriaDTO agregarSubcategoria(SubcategoriaDTO subcategoriaDTO) {
 
-        if(productoDTO.subcategoriaID() == null) {
-            throw new SubcategoriaDesconocida("La subcategoría no puede ser desconocida");
+        this.categoriaExiste(subcategoriaDTO.categoriaID());
+
+        val subcategoriaAagregar = this.subcategoriasDataMapper.toSubcategoria(subcategoriaDTO);
+
+        val subcategoriaAgregada = this.subcategoriasRepository.save(subcategoriaAagregar);
+
+        return this.subcategoriasDataMapper.toSubcategoriaDTO(subcategoriaAgregada);
+
+    }
+
+    public List<SubcategoriaDTO> findAllSubcategorias() {
+
+        val subcategorias = this.subcategoriasRepository.findAll();
+
+        if(subcategorias.isEmpty()) {
+            throw new Sinsubcategorias("No hay subcategorías cargadas en el sistema.");
         }
 
-        this.subcategoriaExiste(productoDTO.subcategoriaID());
+        return subcategorias.stream().map(s -> this.subcategoriasDataMapper.toSubcategoriaDTO(s)).toList();
+
+    }
+
+    public SubcategoriaDTO findSubcategoriaById(String subcategoriaID) {
+
+        val subcategoriaExistente = this.subcategoriaExistente(subcategoriaID);
+
+        return this.subcategoriasDataMapper.toSubcategoriaDTO(subcategoriaExistente);
+
+    }
+
+    public void deleteSubcategoriaById(String subcategoriaID) {
+
+        val subcategoriaExistente = this.subcategoriaExistente(subcategoriaID);
+
+        this.subcategoriasRepository.deleteById(Long.valueOf(subcategoriaID));
+
     }
 
     public void identificadorDeProdExiste(ProductoDTO productoDTO) {
