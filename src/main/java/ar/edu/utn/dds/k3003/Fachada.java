@@ -76,16 +76,13 @@ public class Fachada implements FachadaDonaciones {
     @Getter @Setter private SubcategoriasRepository subcategoriasRepository;
 
     @Autowired
-    @Getter @Setter private DonacionesRepository donacionRepository;
-
-    @Autowired
     @Getter @Setter private DetallesProductosRepository detallesProductosRepository;
 
     @Autowired
     @Getter @Setter private DonacionesDataMapper donacionesDataMapper;
 
     @Autowired
-    @Getter @Setter private ProductosDataMapper productoDataMapper;
+    @Getter @Setter private ProductosDataMapper productosDataMapper;
 
     @Autowired
     @Getter @Setter private IdentificadoresDataMapper identificadoresDataMapper;
@@ -493,11 +490,11 @@ public class Fachada implements FachadaDonaciones {
 
         this.validarProducto(productoDTO);
 
-        val productoAguardar = this.productoDataMapper.toProducto(productoDTO);
+        val productoAguardar = this.productosDataMapper.toProducto(productoDTO);
 
         val productoGuardado = this.productosRepository.save(productoAguardar);
 
-        return this.productoDataMapper.toProductoDTO(productoGuardado);
+        return this.productosDataMapper.toProductoDTO(productoGuardado);
     }
 
     @Override
@@ -505,7 +502,7 @@ public class Fachada implements FachadaDonaciones {
 
         val productoFinal = this.productoExistente(productoID);
 
-        return this.productoDataMapper.toProductoDTO(productoFinal);
+        return this.productosDataMapper.toProductoDTO(productoFinal);
 
     }
 
@@ -556,7 +553,7 @@ public class Fachada implements FachadaDonaciones {
             throw new SinProductos("El sistema no tiene productos cargados");
         }
 
-        return productos.stream().map(producto -> this.productoDataMapper.toProductoDTO(producto)).toList();
+        return productos.stream().map(producto -> this.productosDataMapper.toProductoDTO(producto)).toList();
 
     }
 
@@ -571,11 +568,11 @@ public class Fachada implements FachadaDonaciones {
                 productoDTOsinID.descripcion(),productoDTOsinID.subcategoriaID(),
                 productoDTOsinID.identificadorID());
 
-        val productoAguardar = this.productoDataMapper.toProducto(productoDTOconID);
+        val productoAguardar = this.productosDataMapper.toProducto(productoDTOconID);
 
         val productoGuardado = this.productosRepository.save(productoAguardar);
 
-        return this.productoDataMapper.toProductoDTO(productoGuardado);
+        return this.productosDataMapper.toProductoDTO(productoGuardado);
     }
 
     public void eliminarProducto(String productoID){
@@ -615,4 +612,15 @@ public class Fachada implements FachadaDonaciones {
     public void setFachadaLogistica(FachadaLogistica fachadaLogistica) {
         this.fachadaLog = fachadaLogistica;
     }
+
+    public void vaciarBaseDeDatos(){
+        this.identificadoresRepository.deleteAll();
+        this.productosRepository.deleteAll();
+        this.donacionesRepository.deleteAll();
+        this.historialEstadosRepository.deleteAll();
+        this.detallesProductosRepository.deleteAll();
+        this.categoriasRepository.deleteAll();
+        this.subcategoriasRepository.deleteAll();
+    }
+
 }
