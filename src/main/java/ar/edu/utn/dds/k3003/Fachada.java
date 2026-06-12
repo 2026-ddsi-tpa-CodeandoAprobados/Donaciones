@@ -538,6 +538,18 @@ public class Fachada implements FachadaDonaciones {
 
     }
 
+    public CategoriaDTO findCategoriaByProductoId(String productoID){
+
+        val productoExistente = this.productoExistente(productoID);
+
+        val subcategoriaDeProducto = this.subcategoriasRepository.findById(Long.valueOf(productoExistente.getSubcategoriaID())).get();
+
+        val categoriaDeProducto = this.categoriasRepository.findById(Long.valueOf(subcategoriaDeProducto.getCategoriaID())).get();
+
+        return this.categoriasDataMapper.toCategoriaDTO(categoriaDeProducto);
+
+    }
+
     public void identificadorDeProdExiste(ProductoDTO productoDTO) {
 
         if(productoDTO.identificadorID() == null) {

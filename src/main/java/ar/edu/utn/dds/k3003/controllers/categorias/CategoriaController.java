@@ -5,6 +5,7 @@ import ar.edu.utn.dds.k3003.catedra.dtos.donaciones.CategoriaDTO;
 import ar.edu.utn.dds.k3003.exceptions.categorias.CategoriaDesconocida;
 import ar.edu.utn.dds.k3003.exceptions.categorias.CategoriaNoEncontrada;
 import ar.edu.utn.dds.k3003.exceptions.categorias.SinCategorias;
+import ar.edu.utn.dds.k3003.exceptions.productos.ProductoInexistente;
 import lombok.val;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatusCode;
@@ -56,6 +57,18 @@ public class CategoriaController {
             fachada.eliminarCategoria(categoriaID);
             return ResponseEntity.status(HttpStatusCode.valueOf(204)).body(null);
         }catch(CategoriaNoEncontrada e){
+            return ResponseEntity.status(HttpStatusCode.valueOf(404)).body(null);
+        }
+    }
+
+    @GetMapping("/search/{productoID}")
+    public ResponseEntity<CategoriaDTO> findCategoriaByProductoId(@PathVariable("productoID") String productoID){
+        try{
+            val subcategoriaDTO = fachada.findCategoriaByProductoId(productoID);
+
+            return ResponseEntity.status(HttpStatusCode.valueOf(200)).body(subcategoriaDTO);
+        }
+        catch(ProductoInexistente e){
             return ResponseEntity.status(HttpStatusCode.valueOf(404)).body(null);
         }
     }
