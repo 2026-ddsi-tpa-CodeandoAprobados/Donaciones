@@ -33,7 +33,7 @@ public class ProductoController {
             val productoDTO = new ProductoDTO(
                  null, productoRequest.nombre(),
                     productoRequest.descripcion(), productoRequest.subcategoriaID(),
-                    productoRequest.identificadorID());
+                    productoRequest.identificadorId());
 
             val productoAgregadoDTO = fachada.agregarProducto(productoDTO);
             return ResponseEntity.status(HttpStatusCode.valueOf(201)).body(productoAgregadoDTO);
@@ -79,7 +79,7 @@ public class ProductoController {
 
         try {
             val productoDTO = new ProductoDTO(productoID, productoRequest.nombre(),
-                    productoRequest.descripcion(), productoRequest.subcategoriaID(), productoRequest.identificadorID());
+                    productoRequest.descripcion(), productoRequest.subcategoriaID(), productoRequest.identificadorId());
 
             val productoRegistradoDTO = fachada.modificarProducto(productoID, productoDTO);
 

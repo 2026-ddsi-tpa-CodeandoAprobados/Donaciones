@@ -624,7 +624,7 @@ public class Fachada implements FachadaDonaciones {
     public Identificador identificadorExistente(String identificadorID) {
 
         val identificadorOpcional = this.identificadoresRepository.findById(Long.valueOf(identificadorID.replace(" ", "")));
-        
+
         if(identificadorOpcional.isEmpty()) {
             throw new IdentificadorNoEncontrado("El identificador no ha sido encontrado");
         }

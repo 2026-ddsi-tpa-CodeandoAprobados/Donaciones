@@ -154,7 +154,7 @@
   "nombre" : "Max Steel Ultimate Version",
   "descripcion" : "Ultima version del Max Steel",
   "subcategoriaID": "1",
-  "identificadorID": "3",
+  "identificadorID": "3"
 }
 
 {
@@ -171,6 +171,6 @@
   "nombre" : "Fideos Luccheti",
   "descripcion" : "Fideos Luccheti 500g",
   "subcategoriaID": "2",
-  "identificadorID": "1",
+  "identificadorID": "4",
   
 }
