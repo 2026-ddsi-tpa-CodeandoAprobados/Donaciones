@@ -175,6 +175,7 @@
 }
 
 {
+  "objeto" : "Donacion",
   "donadorID": "G8fKBRd8f9yYOY5ftXfm-",
   "depositoID": "6",
   "detallesProductosRequest": [
@@ -189,4 +190,23 @@
     }
   ],
   "descripcion": "Donacion"
+}
+
+{
+  "objeto" : "Donacion",
+  "donadorID": "28vhQKG23SI8J_wT_ALjt",
+  "depositoID": "5",
+  "detallesProductosRequest": [
+    {
+      "productoID": "7",
+      "cantidadProducto": 15
+    }
+    ,
+    {
+      "productoID": "10",
+      "cantidadProducto": 20 
+    }
+  ],
+  "descripcion": "Donacion"
+
 }

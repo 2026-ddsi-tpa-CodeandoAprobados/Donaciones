@@ -320,8 +320,6 @@ public class Fachada implements FachadaDonaciones {
 
         val donacionModificable = this.donacionValidadaParaCambioEstado(donacionID, estado);
 
-        this.donacionesRepository.deleteById(donacionModificable.getId());
-
         val donacionModificada = (donacionModificable).modificarEstado(estado);
 
         val nuevoRegistro = new RegistroEstado(donacionID, estado);
