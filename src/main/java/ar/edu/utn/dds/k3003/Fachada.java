@@ -579,7 +579,7 @@ public class Fachada implements FachadaDonaciones {
         this.subcategoriaDeProdExiste(productoDTO);
 
         this.identificadorDeProdExiste(productoDTO);
-        
+
         val identificador = this.identificadorExistente(productoDTO.identificadorID());
 
         this.productoValido(productoDTO, identificador);

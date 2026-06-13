@@ -31,9 +31,9 @@ public class ProductoController {
 
         try{
             val productoDTO = new ProductoDTO(
-                 null, productoRequest.getNombre(),
-                    productoRequest.getDescripcion(), productoRequest.getSubcategoriaID(),
-                    productoRequest.getIdentificadorID());
+                 null, productoRequest.nombre(),
+                    productoRequest.descripcion(), productoRequest.subcategoriaID(),
+                    productoRequest.identificadorID());
 
             val productoAgregadoDTO = fachada.agregarProducto(productoDTO);
             return ResponseEntity.status(HttpStatusCode.valueOf(201)).body(productoAgregadoDTO);
