@@ -668,16 +668,15 @@ public class Fachada implements FachadaDonaciones {
 
         this.validarProducto(productoDTOsinID);
 
-        this.eliminarProducto(productoID);
+        this.productoExiste(productoID);
 
-        val productoDTOconID = new ProductoDTO(
-                productoID, productoDTOsinID.nombre(),
-                productoDTOsinID.descripcion(),productoDTOsinID.subcategoriaID(),
-                productoDTOsinID.identificadorID());
+        val productoAguardar = this.productosDataMapper.toProducto(productoDTOsinID);
 
-        val productoAguardar = this.productosDataMapper.toProducto(productoDTOconID);
+        productoAguardar.setId(Long.valueOf(productoID.replace(" ", "")));
 
-        val productoGuardado = this.productosRepository.save(productoAguardar);
+        val productoAguardarConID = productoAguardar;
+
+        val productoGuardado = this.productosRepository.save(productoAguardarConID);
 
         return this.productosDataMapper.toProductoDTO(productoGuardado);
     }
