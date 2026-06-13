@@ -28,9 +28,11 @@ public class IdentificadorController {
 
             TipoIdentificadorEnum tipoEnumRequest = TipoIdentificadorEnum.valueOf(identificadorRequest.getTipo().toUpperCase().trim());
 
-            val identificadorDTO = new IdentificadorDTO(null, tipoEnumRequest, identificadorRequest.getDescripcion());
+            val identificadorDTOSinID = new IdentificadorDTO(null, tipoEnumRequest, identificadorRequest.getDescripcion());
 
-            return ResponseEntity.status(HttpStatus.valueOf(201)).body(identificadorDTO);
+            val identificadorDTOConID= this.fachada.agregarIdentificador(identificadorDTOSinID);
+
+            return ResponseEntity.status(HttpStatus.valueOf(201)).body(identificadorDTOConID);
 
         }catch (IdentificadorInvalido e){
             return ResponseEntity.status(HttpStatusCode.valueOf(400)).body(null);
@@ -61,8 +63,6 @@ public class IdentificadorController {
         }catch(IdentificadorNoEncontrado e){
             return ResponseEntity.status(HttpStatusCode.valueOf(404)).build();
         }
-
-
     }
 
 

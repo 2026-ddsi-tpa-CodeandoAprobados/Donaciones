@@ -99,5 +99,31 @@
   "descripcion" : "Esta subcategoria pertenece a la categoria Alimentos",
   "nombre" : "Carne",
   "categoriaID": "7",
-  "id_generado_al_enviar_request" : 
+  "id_generado_al_enviar_request" : "8"
+}
+
+{
+  "objeto" : "Subcategoria",
+  "descripcion" : "Esta subcategoria pertenece a la categoria Bebidas",
+  "nombre" : "Gaseosa",
+  "categoriaID": "9",
+  "id_generado_al_enviar_request" : "10"
+}
+
+{
+
+  "objeto" : "Subcategoria",
+  "descripcion" : "Esta subcategoria pertenece a la categoria Bebidas",
+  "nombre" : "Agua",
+  "categoriaID": "9",
+  "id_generado_al_enviar_request" : "11"
+
+}
+
+{
+
+  "objeto" : "Identificador",
+  "descripcion": "QR 10",
+  "tipo": "QR"
+
 }
