@@ -4,18 +4,4 @@ import ar.edu.utn.dds.k3003.catedra.dtos.donaciones.EstadoDonacionEnum;
 import lombok.Getter;
 import lombok.Setter;
 
-public class EstadoDonacionRequest {
-
-    @Getter
-    @Setter
-    private EstadoDonacionEnum estado;
-
-    public EstadoDonacionRequest() {
-    }
-
-    public EstadoDonacionRequest(EstadoDonacionEnum estado) {
-        this.setEstado(estado);
-    }
-
-
-}
+public record EstadoDonacionRequest (String estado){}

@@ -143,7 +143,9 @@ public class DonacionController {
     )
     {
         try{
-            DonacionDTO donacionModificadaDTO = fachada.cambiarEstadoDeDonacion(donacionID, request.getEstado());
+            EstadoDonacionEnum estadoDonacionEnum = EstadoDonacionEnum.valueOf(request.estado());
+
+            DonacionDTO donacionModificadaDTO = fachada.cambiarEstadoDeDonacion(donacionID, estadoDonacionEnum);
             return ResponseEntity
                     .status(HttpStatusCode.valueOf(200))
                     .body(donacionModificadaDTO);
