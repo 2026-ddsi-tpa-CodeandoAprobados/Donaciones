@@ -163,3 +163,11 @@
   "subcategoriaID": "1",
   "identificadorID": "3"
 }
+
+{
+  "objeto" : "Producto",
+  "nombre" : "Max Steel Ultimate Version",
+  "descripcion" : "Ultima version del Max Steel",
+  "subcategoriaID": "1",
+  "identificadorID": "3"
+}

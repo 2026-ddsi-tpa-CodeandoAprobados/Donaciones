@@ -4,6 +4,7 @@ import ar.edu.utn.dds.k3003.Fachada;
 import ar.edu.utn.dds.k3003.catedra.dtos.donaciones.DonacionDTO;
 import ar.edu.utn.dds.k3003.catedra.dtos.donaciones.ProductoDTO;
 import ar.edu.utn.dds.k3003.exceptions.categorias.CategoriaNoEncontrada;
+import ar.edu.utn.dds.k3003.exceptions.categorias.SubcategoriaNoEncontrada;
 import ar.edu.utn.dds.k3003.exceptions.identificadores.IdentificadorNoEncontrado;
 import ar.edu.utn.dds.k3003.exceptions.productos.ProductoInexistente;
 import ar.edu.utn.dds.k3003.exceptions.productos.ProductoInvalido;
@@ -38,7 +39,7 @@ public class ProductoController {
             val productoAgregadoDTO = fachada.agregarProducto(productoDTO);
             return ResponseEntity.status(HttpStatusCode.valueOf(201)).body(productoAgregadoDTO);
         }
-        catch(CategoriaNoEncontrada e){
+        catch(SubcategoriaNoEncontrada e){
             return ResponseEntity.status(HttpStatusCode.valueOf(404)).body(null);
         }
         catch(IdentificadorNoEncontrado e){
@@ -78,8 +79,8 @@ public class ProductoController {
     public ResponseEntity<ProductoDTO> actualizarProducto(@PathVariable("id") String productoID, @RequestBody ProductoRequest productoRequest) {
 
         try {
-            val productoDTO = new ProductoDTO(productoID, productoRequest.getNombre(),
-                    productoRequest.getDescripcion(), productoRequest.getSubcategoriaID(), productoRequest.getIdentificadorID());
+            val productoDTO = new ProductoDTO(productoID, productoRequest.nombre(),
+                    productoRequest.descripcion(), productoRequest.subcategoriaID(), productoRequest.identificadorID());
 
             val productoRegistradoDTO = fachada.modificarProducto(productoID, productoDTO);
 
