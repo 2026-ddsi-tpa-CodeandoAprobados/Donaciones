@@ -8,6 +8,8 @@ import ar.edu.utn.dds.k3003.catedra.dtos.donadoresYEntidades.QuejaDTO;
 import ar.edu.utn.dds.k3003.catedra.fachadas.FachadaDonaciones;
 import ar.edu.utn.dds.k3003.catedra.fachadas.FachadaDonadoresYEntidades;
 import ar.edu.utn.dds.k3003.catedra.fachadas.FachadaLogistica;
+import ar.edu.utn.dds.k3003.clients.DonadoresYEntidadesClient;
+import ar.edu.utn.dds.k3003.clients.LogisticaClient;
 import ar.edu.utn.dds.k3003.controllers.donaciones.DetalleProductoRequest;
 import ar.edu.utn.dds.k3003.exceptions.categorias.*;
 import ar.edu.utn.dds.k3003.exceptions.donaciones.*;
@@ -94,11 +96,14 @@ public class Fachada implements FachadaDonaciones {
     @Autowired
     @Getter @Setter private DetallesProductosDataMapper detallesProductosDataMapper;
 
-    @Getter @Setter private FachadaDonadoresYEntidades fachadaDonadoresYEnt;
+    private final DonadoresYEntidadesClient donadoresYEntidadesClient;
 
-    @Getter @Setter private FachadaLogistica fachadaLog;
+    private final LogisticaClient logisticaClient;
 
-    public Fachada() {}
+    public Fachada(DonadoresYEntidadesClient donadoresYEntidadesClient, LogisticaClient logisticaClient) {
+        this.donadoresYEntidadesClient = donadoresYEntidadesClient;
+        this.logisticaClient = logisticaClient;
+    }
 
     public void cambioEstadoValido(Donacion donacion, EstadoDonacionEnum estado) {
 
@@ -144,7 +149,7 @@ public class Fachada implements FachadaDonaciones {
     }
 
     public void donadorInhabilitado(String donadorID) {
-        if (!(this.fachadaDonadoresYEnt.puedeDonar(donadorID))) {
+        if (!(this.donadoresYEntidadesClient.verificarSiPuedeDonar(donadorID).get("puedeDonar"))) {
             throw new DonacionNoSePuedeRegistrar("El donador está inhabilitado a realizar una donación.");
         }
     }
@@ -242,18 +247,13 @@ public class Fachada implements FachadaDonaciones {
 
         val detallesProductosGuardados = this.registrarDetallesProductos(donacionDTO.detallesProductosDTO());
 
+        this.logisticaClient.gestionarDonacion(donacionDTO);
+
         val donacionSinID = this.donacionesDataMapper.toDonacion(donacionDTO);
 
         donacionSinID.setDetallesProductos(detallesProductosGuardados);
 
         val donacionGuardada = this.donacionesRepository.save(donacionSinID);
-
-        this.fachadaLog.gestionarDonacion(
-                donacionGuardada.getDepositoID(),
-                String.valueOf(donacionGuardada.getId()),
-                "donacionGuardada.getDetallesProductos()",
-                123
-        );
 
         val nuevoRegistro =
                 new RegistroEstado(String.valueOf(donacionGuardada.getId()) , EstadoDonacionEnum.INGRESADA);
@@ -299,9 +299,9 @@ public class Fachada implements FachadaDonaciones {
 
         val donadorID = donacionDTO.donadorID();
 
-        val donador = this.fachadaDonadoresYEnt.buscarDonadorPorID(donadorID);
+        val donadorDTO = this.donadoresYEntidadesClient.buscarDonadorPorID(donadorID);
 
-        this.donadorNoEncontrado(donador);
+        this.donadorNoEncontrado(donadorDTO);
 
         this.donadorInhabilitado(donadorID);
     }
@@ -374,7 +374,7 @@ public class Fachada implements FachadaDonaciones {
         val quejaGestionable
                 = new QuejaDTO(null, donacionRegistrada.getId().toString(), donacionRegistrada.getDonadorID(), LocalDate.now(), descripcion);
 
-        this.fachadaDonadoresYEnt.agregarQueja(quejaGestionable);
+        this.donadoresYEntidadesClient.agregarQueja(quejaGestionable);
 
         return cambiarEstadoDeDonacion(donacionID, EstadoDonacionEnum.CONQUEJA);
 
@@ -691,16 +691,6 @@ public class Fachada implements FachadaDonaciones {
 
         return identificadores.stream().map(identificador -> this.identificadoresDataMapper.toIdentificadorDTO(identificador) ).toList();
 
-    }
-
-    @Override
-    public void setFachadaDonadoresYEntidades(FachadaDonadoresYEntidades fachadaDonadoresYEntidades) {
-        this.fachadaDonadoresYEnt = fachadaDonadoresYEntidades;
-    }
-
-    @Override
-    public void setFachadaLogistica(FachadaLogistica fachadaLogistica) {
-        this.fachadaLog = fachadaLogistica;
     }
 
     public void vaciarBaseDeDatos(){

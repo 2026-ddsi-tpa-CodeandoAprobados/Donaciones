@@ -29,7 +29,4 @@ public interface FachadaDonaciones {
 
   IdentificadorDTO buscarIdentificadorPorID(String identificadorID) throws NoSuchElementException;
 
-  void setFachadaDonadoresYEntidades(FachadaDonadoresYEntidades fachadaDonadoresYEntidades);
-
-  void setFachadaLogistica(FachadaLogistica fachadaLogistica);
 }
