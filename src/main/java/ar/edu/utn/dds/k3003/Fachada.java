@@ -536,7 +536,6 @@ public class Fachada implements FachadaDonaciones {
 
     public List<DetalleProductoDTO> detallesFromRequestToDTOs(List<DetalleProductoRequest> detallesProductosRequest) {
         return this.detallesProductosDataMapper.fromRequestsToDTOs(detallesProductosRequest);
-
     }
 
     public SubcategoriaDTO findSubcategoriaById(String subcategoriaID) {

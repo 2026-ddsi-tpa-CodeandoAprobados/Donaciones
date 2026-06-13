@@ -3,6 +3,7 @@ package ar.edu.utn.dds.k3003.controllers.donaciones;
 
 import ar.edu.utn.dds.k3003.Fachada;
 import ar.edu.utn.dds.k3003.catedra.dtos.donaciones.DonacionDTO;
+import ar.edu.utn.dds.k3003.catedra.dtos.donaciones.EstadoDonacionEnum;
 import ar.edu.utn.dds.k3003.exceptions.donaciones.CambioEstadoInvalido;
 import ar.edu.utn.dds.k3003.exceptions.donaciones.DonacionNoEncontrada;
 import ar.edu.utn.dds.k3003.exceptions.donaciones.DonacionNoSePuedeRegistrar;
@@ -31,7 +32,14 @@ public class DonacionController {
             val detallesProductosDTOs = fachada.detallesFromRequestToDTOs(donacionRequest.detallesProductosRequest());
 
             val donacionDTO =
-                    new DonacionDTO(null, donacionRequest.donadorID(), donacionRequest.depositoID(), donacionRequest.descripcion(), detallesProductosDTOs, null,  null);
+                    new DonacionDTO(
+                            null,
+                            donacionRequest.donadorID(),
+                            donacionRequest.depositoID(),
+                            donacionRequest.descripcion(),
+                            detallesProductosDTOs,
+                            EstadoDonacionEnum.INGRESADA,
+                            null);
 
             DonacionDTO donacionResponse = fachada.registrarDonacion(donacionDTO);
             return ResponseEntity

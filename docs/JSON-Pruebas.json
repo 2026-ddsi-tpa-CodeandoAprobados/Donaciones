@@ -177,7 +177,7 @@
 {
   "donadorID": "G8fKBRd8f9yYOY5ftXfm-",
   "depositoID": "6",
-  "detallesProductosBase": [
+  "detallesProductosRequest": [
     {
       "productoID": "8",
       "cantidadProducto": 10
