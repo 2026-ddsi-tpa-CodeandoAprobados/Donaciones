@@ -56,14 +56,6 @@
 
 {
   "objeto" : "Subcategoria",
-  "descripcion" : "Esta subcategoria pertenece a la categoria juguetes",
-  "nombre" : "Cartas",
-  "categoriaID": "6",
-  "id_generado_al_enviar_request" : "3"
-}
-
-{
-  "objeto" : "Subcategoria",
   "descripcion" : "Esta subcategoria pertenece a la categoria Vestimenta",
   "nombre" : "Pantalon",
   "categoriaID": "5",
@@ -153,7 +145,8 @@
   "nombre" : "Agua Levite",
   "descripcion" : "Agua Levite de 500ml",
   "subcategoriaID": "11",
-  "identificadorID": "2"
+  "identificadorID": "2",
+  "id_generado_al_enviar_request" : "7"
 }
 
 {
@@ -161,13 +154,23 @@
   "nombre" : "Max Steel Ultimate Version",
   "descripcion" : "Ultima version del Max Steel",
   "subcategoriaID": "1",
-  "identificadorID": "3"
+  "identificadorID": "3",
 }
 
 {
   "objeto" : "Producto",
-  "nombre" : "Max Steel Ultimate Version",
-  "descripcion" : "Ultima version del Max Steel",
-  "subcategoriaID": "1",
-  "identificadorID": "3"
+  "nombre" : "Pelota de Futbol del Mundial",
+  "descripcion" : "Pelota de Futbol Mundial 2026",
+  "subcategoriaID": "2",
+  "identificadorID": "1",
+  
+}
+
+{
+  "objeto" : "Producto",
+  "nombre" : "Fideos Luccheti",
+  "descripcion" : "Fideos Luccheti 500g",
+  "subcategoriaID": "2",
+  "identificadorID": "1",
+  
 }

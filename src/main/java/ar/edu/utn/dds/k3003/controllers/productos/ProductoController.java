@@ -21,7 +21,6 @@ import java.util.List;
 
 @RestController
 @RequestMapping ("/productos")
-
 public class ProductoController {
 
     @Autowired

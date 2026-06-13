@@ -467,8 +467,14 @@ public class Fachada implements FachadaDonaciones {
 
     public void subcategoriaDeProdExiste(ProductoDTO productoDTO) {
 
-        if (productoDTO.subcategoriaID() == null) {
+        if (productoDTO.subcategoriaID() == null ) {
             throw new SubcategoriaDesconocida("La subcategoría no puede ser desconocida");
+        }
+
+        val subcategoriaOpcional = this.subcategoriasRepository.findById(Long.valueOf(productoDTO.subcategoriaID().replace(" ","")));
+
+        if (subcategoriaOpcional.isEmpty()) {
+            throw new SubcategoriaNoEncontrada("La subcategoría asociada al producto no existe");
         }
     }
 
@@ -617,8 +623,8 @@ public class Fachada implements FachadaDonaciones {
 
     public Identificador identificadorExistente(String identificadorID) {
 
-        val identificadorOpcional = this.identificadoresRepository.findById(Long.valueOf(identificadorID));
-
+        val identificadorOpcional = this.identificadoresRepository.findById(Long.valueOf(identificadorID.replace(" ", "")));
+        
         if(identificadorOpcional.isEmpty()) {
             throw new IdentificadorNoEncontrado("El identificador no ha sido encontrado");
         }
