@@ -141,8 +141,10 @@ public class DonacionController {
             @PathVariable("id") String donacionID,
             @RequestBody EstadoDonacionRequest request
     )
+
     {
         try{
+
             EstadoDonacionEnum estadoDonacionEnum = EstadoDonacionEnum.valueOf(request.estado());
 
             DonacionDTO donacionModificadaDTO = fachada.cambiarEstadoDeDonacion(donacionID, estadoDonacionEnum);
