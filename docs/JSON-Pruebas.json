@@ -121,9 +121,37 @@
 }
 
 {
-
   "objeto" : "Identificador",
   "descripcion": "QR 10",
-  "tipo": "QR"
+  "tipo": "QR",
+  "id_generado_al_enviar_request" : "1"
+}
 
+{
+  "objeto" : "Identificador",
+  "descripcion": "QR 20",
+  "tipo": "QR",
+  "id_generado_al_enviar_request" : "2"
+}
+
+{
+  "objeto" : "Identificador",
+  "descripcion": "CODIGODEBARRAS 10",
+  "tipo": "CODIGODEBARRAS",
+  "id_generado_al_enviar_request" : "3"
+}
+
+{
+  "objeto" : "Identificador",
+  "descripcion": "CODIGODEBARRAS 20",
+  "tipo": "CODIGODEBARRAS",
+  "id_generado_al_enviar_request" : "4"
+}
+
+{
+  "objeto" : "Producto",
+  "nombre" : "Agua Levite",
+  "descripcion" : "Agua Levite de 500ml",
+  "subcategoriaID": "11",
+  "identificadorID": "2"
 }

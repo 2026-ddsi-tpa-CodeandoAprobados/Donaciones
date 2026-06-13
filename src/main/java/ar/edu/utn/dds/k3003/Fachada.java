@@ -29,6 +29,7 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 import ar.edu.utn.dds.k3003.model.identificadores.Identificador;
 import ar.edu.utn.dds.k3003.model.productos.DetalleProducto;
@@ -389,17 +390,27 @@ public class Fachada implements FachadaDonaciones {
         }
     }
 
+    public Long cantidadDePalabras(String descripcionProducto){
+        if (descripcionProducto.isBlank()) {
+            return Long.valueOf(0);
+        }
+
+        return Stream.of(descripcionProducto.split(" "))
+                .filter(palabra -> !palabra.isEmpty())
+                .count();
+    }
+
     public void productoValido(ProductoDTO productoDTO, Identificador identificador) {
 
         switch(identificador.getTipo()) {
 
             case QR :
-                if(productoDTO.descripcion().length() < 3){
+                if(this.cantidadDePalabras(productoDTO.descripcion()) < 3){
                     throw new ProductoInvalido("El producto brindado es invalido");
                 } break;
 
             case CODIGODEBARRAS :
-                if (productoDTO.nombre().length() % 2 != 0) {
+                if (productoDTO.nombre().replace(" ","").length() % 2 != 0) {
                     throw new ProductoInvalido("El producto brindado es invalido");
                 } break;
         }
@@ -568,7 +579,7 @@ public class Fachada implements FachadaDonaciones {
         this.subcategoriaDeProdExiste(productoDTO);
 
         this.identificadorDeProdExiste(productoDTO);
-
+        
         val identificador = this.identificadorExistente(productoDTO.identificadorID());
 
         this.productoValido(productoDTO, identificador);
