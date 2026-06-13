@@ -175,9 +175,18 @@
 }
 
 {
-  "objeto" : "Donacion",
-  "donadorID" : "",
-  "descripcion" : "Fideos Luccheti 500g",
-  "subcategoriaID": "2",
-  "identificadorID": "1"
+  "donadorID": "G8fKBRd8f9yYOY5ftXfm-",
+  "depositoID": "6",
+  "detallesProductosBase": [
+    {
+      "productoID": "8",
+      "cantidadProducto": 10
+    }
+    ,
+    {
+      "productoID": "9",
+      "cantidadProducto": 5  
+    }
+  ],
+  "descripcion": "Donacion"
 }
