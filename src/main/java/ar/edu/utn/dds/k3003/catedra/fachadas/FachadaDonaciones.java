@@ -19,7 +19,7 @@ public interface FachadaDonaciones {
 
     List<DonacionDTO> findByDonadorYFechaInicio(String donadorID, LocalDate fecha);
 
-    DonacionDTO registrarQuejaEnDonacion(String donacionID, String descripcion);
+    DonacionDTO registrarQuejaEnDonacion(String donacionID);
 
   ProductoDTO agregarProducto(ProductoDTO productoDTO);
 

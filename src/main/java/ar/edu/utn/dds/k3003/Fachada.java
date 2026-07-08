@@ -366,14 +366,7 @@ public class Fachada implements FachadaDonaciones {
     }
 
     @Override
-    public DonacionDTO registrarQuejaEnDonacion(String donacionID, String descripcion) {
-
-        val donacionRegistrada = donacionExistente(donacionID);
-
-        val quejaGestionable
-                = new QuejaDTO(null, donacionRegistrada.getId().toString(), donacionRegistrada.getDonadorID(), LocalDate.now(), descripcion);
-
-        this.donadoresYEntidadesClient.agregarQueja(quejaGestionable);
+    public DonacionDTO registrarQuejaEnDonacion(String donacionID) {
 
         return cambiarEstadoDeDonacion(donacionID, EstadoDonacionEnum.CONQUEJA);
 

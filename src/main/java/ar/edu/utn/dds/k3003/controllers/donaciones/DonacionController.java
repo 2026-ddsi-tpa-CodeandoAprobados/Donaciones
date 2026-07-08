@@ -166,12 +166,11 @@ public class DonacionController {
 
     @PostMapping("/{id}/queja")
     public ResponseEntity<DonacionDTO> registrarQueja(
-            @PathVariable("id")  String donacionID,
-            @RequestBody QuejaRequest quejaRequest
+            @PathVariable("id")  String donacionID
     )
     {
         try{
-            DonacionDTO donacionModificada =  fachada.registrarQuejaEnDonacion(donacionID,quejaRequest.descripcion());
+            DonacionDTO donacionModificada =  fachada.registrarQuejaEnDonacion(donacionID);
             return ResponseEntity
                     .status(HttpStatusCode.valueOf(201))
                     .body(donacionModificada);
@@ -179,6 +178,12 @@ public class DonacionController {
         catch(DonacionNoEncontrada e){
             return ResponseEntity
                     .status(HttpStatusCode.valueOf(404))
+                    .body(null);
+        }
+
+        catch (CambioEstadoInvalido e){
+            return ResponseEntity
+                    .status(HttpStatusCode.valueOf(400))
                     .body(null);
         }
     }
