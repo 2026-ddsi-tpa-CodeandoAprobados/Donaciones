@@ -7,4 +7,6 @@ import java.util.List;
 import java.util.Optional;
 
 public interface ProductosRepository extends JpaRepository<Producto, Long> {
+
+    boolean existsByIdentificadorID(Long identificadorID);
 }

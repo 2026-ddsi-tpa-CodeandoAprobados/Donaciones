@@ -4,10 +4,7 @@ package ar.edu.utn.dds.k3003;
 
 import ar.edu.utn.dds.k3003.catedra.dtos.donaciones.*;
 import ar.edu.utn.dds.k3003.catedra.dtos.donadoresYEntidades.DonadorDTO;
-import ar.edu.utn.dds.k3003.catedra.dtos.donadoresYEntidades.QuejaDTO;
 import ar.edu.utn.dds.k3003.catedra.fachadas.FachadaDonaciones;
-import ar.edu.utn.dds.k3003.catedra.fachadas.FachadaDonadoresYEntidades;
-import ar.edu.utn.dds.k3003.catedra.fachadas.FachadaLogistica;
 import ar.edu.utn.dds.k3003.clients.DonadoresYEntidadesClient;
 import ar.edu.utn.dds.k3003.clients.LogisticaClient;
 import ar.edu.utn.dds.k3003.controllers.donaciones.DetalleProductoRequest;
@@ -28,7 +25,6 @@ import ar.edu.utn.dds.k3003.model.donaciones.Donacion;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.NoSuchElementException;
-import java.util.Optional;
 import java.util.stream.Stream;
 
 import ar.edu.utn.dds.k3003.model.identificadores.Identificador;
@@ -59,43 +55,69 @@ import org.springframework.stereotype.Service;
 public class Fachada implements FachadaDonaciones {
 
     @Autowired
-    @Getter @Setter private DonacionesRepository donacionesRepository;
+    @Getter
+    @Setter
+    private DonacionesRepository donacionesRepository;
 
     @Autowired
-    @Getter @Setter private HistorialEstadosDonacionRepository historialEstadosRepository;
+    @Getter
+    @Setter
+    private HistorialEstadosDonacionRepository historialEstadosRepository;
 
     @Autowired
-    @Getter @Setter private ProductosRepository productosRepository;
+    @Getter
+    @Setter
+    private ProductosRepository productosRepository;
 
     @Autowired
-    @Getter @Setter private IdentificadoresRepository identificadoresRepository;
+    @Getter
+    @Setter
+    private IdentificadoresRepository identificadoresRepository;
 
     @Autowired
-    @Getter @Setter private CategoriasRepository categoriasRepository;
+    @Getter
+    @Setter
+    private CategoriasRepository categoriasRepository;
 
     @Autowired
-    @Getter @Setter private SubcategoriasRepository subcategoriasRepository;
+    @Getter
+    @Setter
+    private SubcategoriasRepository subcategoriasRepository;
 
     @Autowired
-    @Getter @Setter private DetallesProductosRepository detallesProductosRepository;
+    @Getter
+    @Setter
+    private DetallesProductosRepository detallesProductosRepository;
 
     @Autowired
-    @Getter @Setter private DonacionesDataMapper donacionesDataMapper;
+    @Getter
+    @Setter
+    private DonacionesDataMapper donacionesDataMapper;
 
     @Autowired
-    @Getter @Setter private ProductosDataMapper productosDataMapper;
+    @Getter
+    @Setter
+    private ProductosDataMapper productosDataMapper;
 
     @Autowired
-    @Getter @Setter private IdentificadoresDataMapper identificadoresDataMapper;
+    @Getter
+    @Setter
+    private IdentificadoresDataMapper identificadoresDataMapper;
 
     @Autowired
-    @Getter @Setter private CategoriasDataMapper categoriasDataMapper;
+    @Getter
+    @Setter
+    private CategoriasDataMapper categoriasDataMapper;
 
     @Autowired
-    @Getter @Setter private SubcategoriasDataMapper subcategoriasDataMapper;
+    @Getter
+    @Setter
+    private SubcategoriasDataMapper subcategoriasDataMapper;
 
     @Autowired
-    @Getter @Setter private DetallesProductosDataMapper detallesProductosDataMapper;
+    @Getter
+    @Setter
+    private DetallesProductosDataMapper detallesProductosDataMapper;
 
     private final DonadoresYEntidadesClient donadoresYEntidadesClient;
 
@@ -104,41 +126,6 @@ public class Fachada implements FachadaDonaciones {
     public Fachada(DonadoresYEntidadesClient donadoresYEntidadesClient, LogisticaClient logisticaClient) {
         this.donadoresYEntidadesClient = donadoresYEntidadesClient;
         this.logisticaClient = logisticaClient;
-    }
-
-    public void cambioEstadoValido(Donacion donacion, EstadoDonacionEnum estado) {
-
-        switch (estado) {
-
-            case ACEPTADA:
-                if (donacion.getEstado() != EstadoDonacionEnum.INGRESADA) {
-                    throw new CambioEstadoInvalido("El cambio a ACEPTADA solo es válido desde INGRESADA.");
-                }
-                break;
-
-            case CONQUEJA:
-                if (donacion.getEstado() != EstadoDonacionEnum.ACEPTADA) {
-                    throw new CambioEstadoInvalido("El cambio a CONQUEJA solo es válido desde ACEPTADA.");
-                }
-                break;
-
-            default:
-                throw new CambioEstadoInvalido("Transición de estado no permitida o estado no soportado.");
-
-        }
-
-    }
-
-    public Donacion donacionValidadaParaCambioEstado(String donacionID, EstadoDonacionEnum estado) {
-
-        this.estadoInvalido(estado);
-
-        val donacion = this.donacionExistente(donacionID);
-
-        this.cambioEstadoValido(donacion,estado);
-
-        return donacion;
-
     }
 
     public void estadoInvalido(EstadoDonacionEnum estado) {
@@ -159,8 +146,9 @@ public class Fachada implements FachadaDonaciones {
 
         val donacionOpcional = this.donacionesRepository.findById(Long.valueOf(donacionID));
 
-        this.donacionNoEncontrada(donacionOpcional);
-
+        if(donacionOpcional.isEmpty()){
+            throw new DonacionNoEncontrada("La donación no existe en el sistema.");
+        }
         return donacionOpcional.get();
     }
 
@@ -183,45 +171,13 @@ public class Fachada implements FachadaDonaciones {
         }
     }
 
-    public void donacionNoEncontrada(Optional<Donacion> donacionOpcional) {
-        if (donacionOpcional.isEmpty()) {
-            throw new DonacionNoEncontrada("El ID brindado no está emparejado con una donación existente.");
-        }
-    }
-
-    private void productoNoExiste(Optional<Producto> productoOpcional) {
-
-        if (productoOpcional.isEmpty()) {
-            throw new ProductoInexistente("El producto no existe");
-        }
-    }
-
-    private Producto productoExistente(String productoID) {
-
-        val productoOpcional = this.productosRepository.findById(Long.valueOf(productoID));
-
-        this.productoNoExiste(productoOpcional);
-
-        return productoOpcional.get();
-
-    }
-
-    private void productoExiste(String productoID){
-
-        if(productoID == null) {
-            throw new ProductoInvalido("El ID del producto es desconocida");
-        }
-
-        if(this.productosRepository.findById(Long.valueOf(productoID)).isEmpty()) {
-            throw new ProductoInexistente("El producto con ID " + productoID + " no existe");
-        }
-    }
-
     public void deleteDonacion(String donacionID) {
 
         val donacionOpcionalAeliminar = this.donacionesRepository.findById(Long.valueOf(donacionID));
 
-        this.donacionNoEncontrada(donacionOpcionalAeliminar);
+        if (donacionOpcionalAeliminar.isEmpty()) {
+            throw new DonacionNoEncontrada("El ID brindado no está emparejado con una donación existente.");
+        }
 
         val donacionAeliminar = donacionOpcionalAeliminar.get();
 
@@ -229,11 +185,11 @@ public class Fachada implements FachadaDonaciones {
 
     }
 
-    public List<DonacionDTO> findAllDonaciones(){
+    public List<DonacionDTO> findAllDonaciones() {
 
         val donaciones = this.donacionesRepository.findAll();
 
-        if(donaciones.isEmpty()){
+        if (donaciones.isEmpty()) {
             throw new SinDonaciones("No hay donaciones cargadas en el sistema.");
         }
 
@@ -255,7 +211,7 @@ public class Fachada implements FachadaDonaciones {
         val donacionGuardada = this.donacionesRepository.save(donacionSinID);
 
         val nuevoRegistro =
-                new RegistroEstado(String.valueOf(donacionGuardada.getId()) , EstadoDonacionEnum.INGRESADA);
+                new RegistroEstado(String.valueOf(donacionGuardada.getId()), EstadoDonacionEnum.INGRESADA);
 
         this.historialEstadosRepository.save(nuevoRegistro);
 
@@ -278,7 +234,7 @@ public class Fachada implements FachadaDonaciones {
     private void validarDetallesProductos(List<DetalleProductoDTO> detallesProductosDTOs) {
 
         if (detallesProductosDTOs.stream()
-                .anyMatch(detalleProductoDTO -> detalleProductoDTO.id() != null)){
+                .anyMatch(detalleProductoDTO -> detalleProductoDTO.id() != null)) {
             throw new DonacionNoSePuedeRegistrar("Detalles de productos inválidos.");
         }
     }
@@ -287,7 +243,11 @@ public class Fachada implements FachadaDonaciones {
         detallesProductosDTOs.forEach(detalleProductoDTO -> this.productoExiste(detalleProductoDTO.productoID()));
     }
 
-    private List<DetalleProducto> registrarDetallesProductos(List<DetalleProductoDTO> detallesProductosDTO){
+    public List<DetalleProductoDTO> detallesFromRequestToDTOs(List<DetalleProductoRequest> detallesProductosRequest) {
+        return this.detallesProductosDataMapper.fromRequestsToDTOs(detallesProductosRequest);
+    }
+
+    private List<DetalleProducto> registrarDetallesProductos(List<DetalleProductoDTO> detallesProductosDTO) {
 
         val detallesProductosAguardar = this.detallesProductosDataMapper.toDetallesProductos(detallesProductosDTO);
 
@@ -319,6 +279,13 @@ public class Fachada implements FachadaDonaciones {
     }
 
     @Override
+    public DonacionDTO registrarQuejaEnDonacion(String donacionID) {
+
+        return cambiarEstadoDeDonacion(donacionID, EstadoDonacionEnum.CONQUEJA);
+
+    }
+
+    @Override
     public DonacionDTO cambiarEstadoDeDonacion(String donacionID, EstadoDonacionEnum estado) {
 
         val donacionModificable = this.donacionValidadaParaCambioEstado(donacionID, estado);
@@ -333,6 +300,42 @@ public class Fachada implements FachadaDonaciones {
 
         return this.donacionesDataMapper.toDonacionDTO(donacionGuardada);
     }
+
+    public Donacion donacionValidadaParaCambioEstado(String donacionID, EstadoDonacionEnum estado) {
+
+        this.estadoInvalido(estado);
+
+        val donacion = this.donacionExistente(donacionID);
+
+        this.cambioEstadoValido(donacion,estado);
+
+        return donacion;
+
+    }
+
+    public void cambioEstadoValido(Donacion donacion, EstadoDonacionEnum estado) {
+
+        switch (estado) {
+
+            case ACEPTADA:
+                if (donacion.getEstado() != EstadoDonacionEnum.INGRESADA) {
+                    throw new CambioEstadoInvalido("El cambio a ACEPTADA solo es válido desde INGRESADA.");
+                }
+                break;
+
+            case CONQUEJA:
+                if (donacion.getEstado() != EstadoDonacionEnum.ACEPTADA) {
+                    throw new CambioEstadoInvalido("El cambio a CONQUEJA solo es válido desde ACEPTADA.");
+                }
+                break;
+
+            default:
+                throw new CambioEstadoInvalido("Transición de estado no permitida o estado no soportado.");
+
+        }
+
+    }
+
 
     @Override
     public List<DonacionDTO> findByDonadorYFechaInicio(String donadorID, LocalDate fecha) {
@@ -368,13 +371,6 @@ public class Fachada implements FachadaDonaciones {
         return this.donacionesDataMapper.donacionesToDonacionesDTO(donacionesCoincidentes);
     }
 
-    @Override
-    public DonacionDTO registrarQuejaEnDonacion(String donacionID) {
-
-        return cambiarEstadoDeDonacion(donacionID, EstadoDonacionEnum.CONQUEJA);
-
-    }
-
     public void identificadorExiste(String identificadorID) {
 
         val identificadorOpcional = this.identificadoresRepository.findById(Long.valueOf(identificadorID));
@@ -386,36 +382,12 @@ public class Fachada implements FachadaDonaciones {
 
     public Long cantidadDePalabras(String descripcionProducto){
         if (descripcionProducto.isBlank()) {
-            return Long.valueOf(0);
+            return 0L;
         }
 
         return Stream.of(descripcionProducto.split(" "))
                 .filter(palabra -> !palabra.isEmpty())
                 .count();
-    }
-
-    public void productoValido(ProductoDTO productoDTO, Identificador identificador) {
-
-        switch(identificador.getTipo()) {
-
-            case QR :
-                if(this.cantidadDePalabras(productoDTO.descripcion()) < 3){
-                    throw new ProductoInvalido("El producto brindado es invalido");
-                } break;
-
-            case CODIGODEBARRAS :
-                if (productoDTO.nombre().replace(" ","").length() % 2 != 0) {
-                    throw new ProductoInvalido("El producto brindado es invalido");
-                } break;
-        }
-    }
-
-    public void eliminarCategoria(String categoriaID) {
-
-        val categoriaAeliminar = this.categoriaExistente(categoriaID);
-
-        this.categoriasRepository.delete(categoriaAeliminar);
-
     }
 
     public List<CategoriaDTO> findAllCategorias() {
@@ -426,27 +398,6 @@ public class Fachada implements FachadaDonaciones {
             throw new SinCategorias("No hay categorias cargadas en el sistema.");
         }
         return categorias.stream().map(categoria -> this.categoriasDataMapper.toCategoriaDTO(categoria)).toList();
-
-    }
-
-    public void categoriaExiste(String categoriaID){
-
-        val categoriaOpcional = this.categoriasRepository.findById(Long.valueOf(categoriaID));
-
-        if(categoriaOpcional.isEmpty()) {
-            throw new CategoriaNoEncontrada("La categoria asociada a la subcategoria no existe");
-        }
-    }
-
-    public Categoria categoriaExistente(String categoriaID) {
-
-        val categoriaOpcional = this.categoriasRepository.findById(Long.valueOf(categoriaID));
-
-        if(categoriaOpcional.isEmpty()) {
-            throw new CategoriaNoEncontrada("La categoria no fue encontrada");
-        }
-
-        return categoriaOpcional.get();
 
     }
 
@@ -484,13 +435,35 @@ public class Fachada implements FachadaDonaciones {
 
     }
 
-        public void categoriaDesconocida(CategoriaDTO categoriaDTO) {
+    public void categoriaExiste(String categoriaID){
+
+        val categoriaOpcional = this.categoriasRepository.findById(Long.valueOf(categoriaID));
+
+        if(categoriaOpcional.isEmpty()) {
+            throw new CategoriaNoEncontrada("La categoria asociada a la subcategoria no existe");
+        }
+    }
+
+    public Categoria categoriaExistente(String categoriaID) {
+
+        val categoriaOpcional = this.categoriasRepository.findById(Long.valueOf(categoriaID));
+
+        if(categoriaOpcional.isEmpty()) {
+            throw new CategoriaNoEncontrada("La categoria no fue encontrada");
+        }
+
+        return categoriaOpcional.get();
+
+    }
+
+    public void categoriaDesconocida(CategoriaDTO categoriaDTO) {
 
         if(categoriaDTO == null){
             throw new CategoriaDesconocida("La categoria no puede ser nula");
         }
-
     }
+
+
 
     public CategoriaDTO agregarCategoria(CategoriaDTO categoriaDTO) {
 
@@ -501,6 +474,28 @@ public class Fachada implements FachadaDonaciones {
         val categoriaAgregada = this.categoriasRepository.save(categoriaAagregar);
 
         return this.categoriasDataMapper.toCategoriaDTO(categoriaAgregada);
+
+    }
+
+    public void eliminarCategoria(String categoriaID) {
+
+        val categoriaAeliminar = this.categoriaExistente(categoriaID);
+
+        this.categoriasRepository.delete(categoriaAeliminar);
+
+    }
+
+    public CategoriaDTO findCategoriaByProductoId(String productoID){
+
+        val productoExistente = this.productoExistente(productoID);
+
+
+
+        val subcategoriaDeProducto = this.subcategoriasRepository.findById(Long.valueOf(productoExistente.getSubcategoriaID())).get();
+
+        val categoriaDeProducto = this.categoriasRepository.findById(Long.valueOf(subcategoriaDeProducto.getCategoriaID())).get();
+
+        return this.categoriasDataMapper.toCategoriaDTO(categoriaDeProducto);
 
     }
 
@@ -528,10 +523,6 @@ public class Fachada implements FachadaDonaciones {
 
     }
 
-    public List<DetalleProductoDTO> detallesFromRequestToDTOs(List<DetalleProductoRequest> detallesProductosRequest) {
-        return this.detallesProductosDataMapper.fromRequestsToDTOs(detallesProductosRequest);
-    }
-
     public SubcategoriaDTO findSubcategoriaById(String subcategoriaID) {
 
         val subcategoriaExistente = this.subcategoriaExistente(subcategoriaID);
@@ -542,21 +533,21 @@ public class Fachada implements FachadaDonaciones {
 
     public void deleteSubcategoriaById(String subcategoriaID) {
 
-        val subcategoriaExistente = this.subcategoriaExistente(subcategoriaID);
+        this.subcategoriaExiste(subcategoriaID);
 
         this.subcategoriasRepository.deleteById(Long.valueOf(subcategoriaID));
 
     }
 
-    public CategoriaDTO findCategoriaByProductoId(String productoID){
 
-        val productoExistente = this.productoExistente(productoID);
+    public void identificadorUnico (String identificadorID){
 
-        val subcategoriaDeProducto = this.subcategoriasRepository.findById(Long.valueOf(productoExistente.getSubcategoriaID())).get();
+        val yaEstaAsociado = this.productosRepository.existsByIdentificadorID(Long.valueOf(identificadorID));
 
-        val categoriaDeProducto = this.categoriasRepository.findById(Long.valueOf(subcategoriaDeProducto.getCategoriaID())).get();
-
-        return this.categoriasDataMapper.toCategoriaDTO(categoriaDeProducto);
+        if(yaEstaAsociado){
+            throw new ProductoInvalido("El identificador asociado al producto ya se encuentra asocidado con un " +
+                    "producto cargado en sistema");
+        }
 
     }
 
@@ -567,6 +558,31 @@ public class Fachada implements FachadaDonaciones {
         }
 
         this.identificadorExiste(productoDTO.identificadorID());
+
+        this.identificadorUnico(productoDTO.identificadorID());
+    }
+
+    private void productoExiste(String productoID){
+
+        if(productoID == null) {
+            throw new ProductoInvalido("El ID del producto es desconocida");
+        }
+
+        if(this.productosRepository.findById(Long.valueOf(productoID)).isEmpty()) {
+            throw new ProductoInexistente("El producto con ID " + productoID + " no existe");
+        }
+    }
+
+    private Producto productoExistente(String productoID) {
+
+        val productoOpcional = this.productosRepository.findById(Long.valueOf(productoID));
+
+        if (productoOpcional.isEmpty()) {
+            throw new ProductoInexistente("El producto no existe");
+        }
+
+        return productoOpcional.get();
+
     }
 
     public void validarProducto(ProductoDTO productoDTO) {
@@ -585,6 +601,22 @@ public class Fachada implements FachadaDonaciones {
 
     }
 
+    public void productoValido(ProductoDTO productoDTO, Identificador identificador) {
+
+        switch(identificador.getTipo()) {
+
+            case QR :
+                if(this.cantidadDePalabras(productoDTO.descripcion()) < 3){
+                    throw new ProductoInvalido("El producto brindado es invalido");
+                } break;
+
+            case CODIGODEBARRAS :
+                if (productoDTO.nombre().replace(" ","").length() % 2 != 0) {
+                    throw new ProductoInvalido("El producto brindado es invalido");
+                } break;
+        }
+    }
+
     @Override
     public ProductoDTO agregarProducto(ProductoDTO productoDTO) {
 
@@ -595,6 +627,28 @@ public class Fachada implements FachadaDonaciones {
         val productoGuardado = this.productosRepository.save(productoAguardar);
 
         return this.productosDataMapper.toProductoDTO(productoGuardado);
+    }
+
+    public ProductoDTO modificarProducto(String productoID, ProductoDTO productoDTOsinID){
+
+        this.validarProducto(productoDTOsinID);
+
+        this.productoExiste(productoID);
+
+        val productoAguardar = this.productosDataMapper.toProducto(productoDTOsinID);
+
+        productoAguardar.setId(Long.valueOf(productoID.replace(" ", "")));
+
+        val productoGuardado = this.productosRepository.save(productoAguardar);
+
+        return this.productosDataMapper.toProductoDTO(productoGuardado);
+    }
+
+    public void eliminarProducto(String productoID){
+
+        val productoAeliminar =  this.productoExistente(productoID);
+        this.productosRepository.delete(productoAeliminar);
+
     }
 
     @Override
@@ -611,6 +665,27 @@ public class Fachada implements FachadaDonaciones {
         if(!(identificadorDTO.tipo().equals(TipoIdentificadorEnum.QR) || identificadorDTO.tipo().equals(TipoIdentificadorEnum.CODIGODEBARRAS) )) {
             throw new IdentificadorInvalido("El identificador no es instancia de uno ya creado en sistema");
         }
+
+    }
+
+    @Override
+    public IdentificadorDTO buscarIdentificadorPorID(String identificadorID) {
+
+        val identificador = this.identificadorExistente(identificadorID);
+
+        return this.identificadoresDataMapper.toIdentificadorDTO(identificador);
+
+    }
+
+    public List<IdentificadorDTO> findAllIdentificadores(){
+
+        val identificadores = this.identificadoresRepository.findAll();
+
+        if(identificadores.isEmpty()) {
+            throw new SinIdentificadores("El sistema no tiene identificadores cargados");
+        }
+
+        return identificadores.stream().map(identificador -> this.identificadoresDataMapper.toIdentificadorDTO(identificador) ).toList();
 
     }
 
@@ -657,50 +732,6 @@ public class Fachada implements FachadaDonaciones {
 
     }
 
-    public ProductoDTO modificarProducto(String productoID, ProductoDTO productoDTOsinID){
-
-        this.validarProducto(productoDTOsinID);
-
-        this.productoExiste(productoID);
-
-        val productoAguardar = this.productosDataMapper.toProducto(productoDTOsinID);
-
-        productoAguardar.setId(Long.valueOf(productoID.replace(" ", "")));
-
-        val productoAguardarConID = productoAguardar;
-
-        val productoGuardado = this.productosRepository.save(productoAguardarConID);
-
-        return this.productosDataMapper.toProductoDTO(productoGuardado);
-    }
-
-    public void eliminarProducto(String productoID){
-
-        val productoAeliminar =  this.productoExistente(productoID);
-        this.productosRepository.delete(productoAeliminar);
-
-    }
-
-    @Override
-    public IdentificadorDTO buscarIdentificadorPorID(String identificadorID) {
-
-        val identificador = this.identificadorExistente(identificadorID);
-
-        return this.identificadoresDataMapper.toIdentificadorDTO(identificador);
-
-    }
-
-    public List<IdentificadorDTO> findAllIdentificadores(){
-
-        val identificadores = this.identificadoresRepository.findAll();
-
-        if(identificadores.isEmpty()) {
-            throw new SinIdentificadores("El sistema no tiene identificadores cargados");
-        }
-
-        return identificadores.stream().map(identificador -> this.identificadoresDataMapper.toIdentificadorDTO(identificador) ).toList();
-
-    }
 
     public void vaciarBaseDeDatos(){
         this.identificadoresRepository.deleteAll();

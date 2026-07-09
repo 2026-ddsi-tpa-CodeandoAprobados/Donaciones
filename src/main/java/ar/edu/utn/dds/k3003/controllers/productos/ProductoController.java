@@ -5,6 +5,7 @@ import ar.edu.utn.dds.k3003.catedra.dtos.donaciones.DonacionDTO;
 import ar.edu.utn.dds.k3003.catedra.dtos.donaciones.ProductoDTO;
 import ar.edu.utn.dds.k3003.exceptions.categorias.CategoriaNoEncontrada;
 import ar.edu.utn.dds.k3003.exceptions.categorias.SubcategoriaNoEncontrada;
+import ar.edu.utn.dds.k3003.exceptions.identificadores.IdentificadorInvalido;
 import ar.edu.utn.dds.k3003.exceptions.identificadores.IdentificadorNoEncontrado;
 import ar.edu.utn.dds.k3003.exceptions.productos.ProductoInexistente;
 import ar.edu.utn.dds.k3003.exceptions.productos.ProductoInvalido;
