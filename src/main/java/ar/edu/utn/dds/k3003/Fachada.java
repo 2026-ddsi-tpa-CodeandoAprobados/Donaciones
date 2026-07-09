@@ -248,8 +248,6 @@ public class Fachada implements FachadaDonaciones {
 
         val detallesProductosGuardados = this.registrarDetallesProductos(donacionDTO.detallesProductosDTO());
 
-        this.logisticaClient.gestionarDonacion(donacionDTO);
-
         val donacionSinID = this.donacionesDataMapper.toDonacion(donacionDTO);
 
         donacionSinID.setDetallesProductos(detallesProductosGuardados);
@@ -261,7 +259,12 @@ public class Fachada implements FachadaDonaciones {
 
         this.historialEstadosRepository.save(nuevoRegistro);
 
-        return this.donacionesDataMapper.toDonacionDTO(donacionGuardada);
+        val donacionDTOguardada = this.donacionesDataMapper.toDonacionDTO(donacionGuardada);
+
+        this.logisticaClient.gestionarDonacion(donacionDTOguardada);
+
+        return donacionDTOguardada;
+
     }
 
     private void validarRegistroDetallesProductos(List<DetalleProductoDTO> detallesProductosDTOs) {
