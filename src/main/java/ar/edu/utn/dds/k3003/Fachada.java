@@ -542,7 +542,7 @@ public class Fachada implements FachadaDonaciones {
 
     public void identificadorUnico (String identificadorID){
 
-        val yaEstaAsociado = this.productosRepository.existsByIdentificadorID(Long.valueOf(identificadorID));
+        val yaEstaAsociado = this.productosRepository.existsByIdentificadorID(identificadorID);
 
         if(yaEstaAsociado){
             throw new ProductoInvalido("El identificador asociado al producto ya se encuentra asocidado con un " +
