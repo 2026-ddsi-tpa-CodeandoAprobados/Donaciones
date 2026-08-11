@@ -605,12 +605,12 @@ public class Fachada implements FachadaDonaciones {
 
         switch(identificador.getTipo()) {
 
-            case QR :
+            case CODIGODEBARRAS :
                 if(this.cantidadDePalabras(productoDTO.descripcion()) < 3){
                     throw new ProductoInvalido("El producto brindado es invalido");
                 } break;
 
-            case CODIGODEBARRAS :
+            case QR :
                 if (productoDTO.nombre().replace(" ","").length() % 2 != 0) {
                     throw new ProductoInvalido("El producto brindado es invalido");
                 } break;
