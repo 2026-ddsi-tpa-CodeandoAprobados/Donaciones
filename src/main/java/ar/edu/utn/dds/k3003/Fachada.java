@@ -45,6 +45,7 @@ import ar.edu.utn.dds.k3003.repositories_DataMapper.productos.ProductosDataMappe
 import ar.edu.utn.dds.k3003.repositories_DataMapper.productos.ProductosRepository;
 import ar.edu.utn.dds.k3003.repositories_DataMapper.subcategorias.SubcategoriasDataMapper;
 import ar.edu.utn.dds.k3003.repositories_DataMapper.subcategorias.SubcategoriasRepository;
+import feign.FeignException;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.val;
@@ -136,7 +137,7 @@ public class Fachada implements FachadaDonaciones {
 
     }
 
-    public void donadorInhabilitado(String donadorID) {
+    public void donadorHabilitado(String donadorID) {
         if (!(this.donadoresYEntidadesClient.verificarSiPuedeDonar(donadorID).get("puedeDonar"))) {
             throw new DonacionNoSePuedeRegistrar("El donador está inhabilitado a realizar una donación.");
         }
@@ -164,12 +165,6 @@ public class Fachada implements FachadaDonaciones {
         }
     }
 
-    public void donadorNoEncontrado(DonadorDTO donadorDTO) {
-        if (donadorDTO == null) {
-            throw new DonadorNoEncontrado("El donador asociado a la donación no se encuentra registrado en el" +
-                    "sistema");
-        }
-    }
 
     public void deleteDonacion(String donacionID) {
 
@@ -240,7 +235,15 @@ public class Fachada implements FachadaDonaciones {
     }
 
     private void validarProductos(List<DetalleProductoDTO> detallesProductosDTOs) {
-        detallesProductosDTOs.forEach(detalleProductoDTO -> this.productoExiste(detalleProductoDTO.productoID()));
+        detallesProductosDTOs.forEach(detalleProductoDTO -> this.productoValidoParaDonacion(detalleProductoDTO.productoID()));
+    }
+
+    private void productoValidoParaDonacion(String productoID) {
+
+        if(this.productosRepository.findById(Long.valueOf(productoID)).isEmpty()) {
+            throw new DonacionNoSePuedeRegistrar("El producto con ID " + productoID + " no existe");
+        }
+
     }
 
     public List<DetalleProductoDTO> detallesFromRequestToDTOs(List<DetalleProductoRequest> detallesProductosRequest) {
@@ -263,11 +266,27 @@ public class Fachada implements FachadaDonaciones {
 
         val donadorID = donacionDTO.donadorID();
 
-        val donadorDTO = this.donadoresYEntidadesClient.buscarDonadorPorID(donadorID);
+        this.donadorExiste(donadorID);
 
-        this.donadorNoEncontrado(donadorDTO);
+        this.donadorHabilitado(donadorID);
+    }
 
-        this.donadorInhabilitado(donadorID);
+    private void donadorExiste(String donadorID) {
+
+        if (!(this.busquedaDonadorPorID(donadorID))){
+            throw new DonacionNoSePuedeRegistrar("El donador con ID " + donadorID + " no existe");
+        }
+
+    }
+
+    private boolean busquedaDonadorPorID(String donadorID) {
+        try {
+            this.donadoresYEntidadesClient.buscarDonadorPorID(donadorID);
+            return true;
+
+        } catch(FeignException.FeignClientException.NotFound e) {
+            return false;
+        }
     }
 
     @Override
@@ -488,8 +507,6 @@ public class Fachada implements FachadaDonaciones {
     public CategoriaDTO findCategoriaByProductoId(String productoID){
 
         val productoExistente = this.productoExistente(productoID);
-
-
 
         val subcategoriaDeProducto = this.subcategoriasRepository.findById(Long.valueOf(productoExistente.getSubcategoriaID())).get();
 
