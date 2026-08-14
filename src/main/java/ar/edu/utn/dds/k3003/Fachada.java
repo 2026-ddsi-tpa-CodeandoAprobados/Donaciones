@@ -214,7 +214,7 @@ public class Fachada implements FachadaDonaciones {
 
         val donacionDTOguardada = this.donacionesDataMapper.toDonacionDTO(donacionGuardada);
 
-        this.logisticaClient.gestionarDonacion(donacionDTOguardada);
+        this.gestionDonacionByLogistica(donacionDTOguardada);
 
         return donacionDTOguardada;
 
@@ -279,6 +279,21 @@ public class Fachada implements FachadaDonaciones {
             throw new DonacionNoSePuedeRegistrar("El donador con ID " + donadorID + " no existe");
         }
 
+    }
+
+    private void gestionDonacionByLogistica (DonacionDTO donacionDTO) {
+        if(!(resultadoGestionLogistica(donacionDTO))){
+            throw new DonacionNoSePuedeRegistrar("Donación invalidada por logística");
+        }
+    }
+
+    private boolean resultadoGestionLogistica (DonacionDTO donacionDTO) {
+        try {
+            this.logisticaClient.gestionarDonacion(donacionDTO);
+            return true;
+        } catch (FeignException.FeignClientException.NotFound e) {
+            return false;
+        }
     }
 
     private boolean busquedaDonadorPorID(String donadorID) {
