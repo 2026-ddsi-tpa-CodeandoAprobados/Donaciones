@@ -47,15 +47,9 @@ public class DonacionController {
                     .body(donacionResponse);
         } catch (DonacionNoSePuedeRegistrar e) {
             return ResponseEntity
-                    .status(HttpStatusCode.valueOf(401))
-                    .body(null);
-        } catch (DonadorNoEncontrado e) {
-            return ResponseEntity
                     .status(HttpStatusCode.valueOf(404))
                     .body(null);
         }
-
-
     }
 
     @GetMapping
