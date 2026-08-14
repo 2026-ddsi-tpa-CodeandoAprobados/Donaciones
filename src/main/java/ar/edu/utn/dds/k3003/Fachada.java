@@ -46,6 +46,7 @@ import ar.edu.utn.dds.k3003.repositories_DataMapper.productos.ProductosRepositor
 import ar.edu.utn.dds.k3003.repositories_DataMapper.subcategorias.SubcategoriasDataMapper;
 import ar.edu.utn.dds.k3003.repositories_DataMapper.subcategorias.SubcategoriasRepository;
 import feign.FeignException;
+import jakarta.transaction.Transactional;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.val;
@@ -191,6 +192,7 @@ public class Fachada implements FachadaDonaciones {
         return donaciones.stream().map(donacion -> this.donacionesDataMapper.toDonacionDTO(donacion)).toList();
     }
 
+    @Transactional
     public DonacionDTO registrarDonacion(DonacionDTO donacionDTO) {
 
         this.validarRegistroDonacion(donacionDTO);
