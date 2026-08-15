@@ -139,8 +139,12 @@ public class Fachada implements FachadaDonaciones {
     }
 
     public void donadorHabilitado(String donadorID) {
-        if (!(this.donadoresYEntidadesClient.verificarSiPuedeDonar(donadorID).get("puedeDonar"))) {
-            throw new DonacionNoSePuedeRegistrar("El donador está inhabilitado a realizar una donación.");
+        try {
+            if (!(this.donadoresYEntidadesClient.verificarSiPuedeDonar(donadorID).get("puedeDonar"))) {
+                throw new DonacionNoSePuedeRegistrar("El donador está inhabilitado a realizar una donación.");
+            }
+        } catch (FeignException e) {
+            throw new DonacionNoSePuedeRegistrar("No se pudo verificar si el donador está habilitado.");
         }
     }
 
