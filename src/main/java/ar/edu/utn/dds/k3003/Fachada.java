@@ -291,7 +291,7 @@ public class Fachada implements FachadaDonaciones {
         try {
             this.logisticaClient.gestionarDonacion(donacionDTO);
             return true;
-        } catch (FeignException.FeignClientException.NotFound e) {
+        } catch (FeignException e) {
             return false;
         }
     }
@@ -301,7 +301,7 @@ public class Fachada implements FachadaDonaciones {
             this.donadoresYEntidadesClient.buscarDonadorPorID(donadorID);
             return true;
 
-        } catch(FeignException.FeignClientException.NotFound e) {
+        } catch(FeignException e) {
             return false;
         }
     }
@@ -314,6 +314,7 @@ public class Fachada implements FachadaDonaciones {
         return this.donacionesDataMapper.toDonacionDTO(donacionFinal);
     }
 
+    @Transactional
     @Override
     public DonacionDTO registrarQuejaEnDonacion(String donacionID) {
 
@@ -321,6 +322,7 @@ public class Fachada implements FachadaDonaciones {
 
     }
 
+    @Transactional
     @Override
     public DonacionDTO cambiarEstadoDeDonacion(String donacionID, EstadoDonacionEnum estado) {
 
