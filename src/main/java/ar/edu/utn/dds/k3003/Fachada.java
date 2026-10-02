@@ -1,5 +1,3 @@
-
-
 package ar.edu.utn.dds.k3003;
 
 import ar.edu.utn.dds.k3003.catedra.dtos.donaciones.*;
@@ -45,6 +43,7 @@ import ar.edu.utn.dds.k3003.repositories_DataMapper.productos.ProductosDataMappe
 import ar.edu.utn.dds.k3003.repositories_DataMapper.productos.ProductosRepository;
 import ar.edu.utn.dds.k3003.repositories_DataMapper.subcategorias.SubcategoriasDataMapper;
 import ar.edu.utn.dds.k3003.repositories_DataMapper.subcategorias.SubcategoriasRepository;
+import ar.edu.utn.dds.k3003.services.MetricasService;
 import feign.FeignException;
 import jakarta.transaction.Transactional;
 import lombok.Getter;
@@ -120,6 +119,9 @@ public class Fachada implements FachadaDonaciones {
     @Getter
     @Setter
     private DetallesProductosDataMapper detallesProductosDataMapper;
+
+    @Autowired
+    private MetricasService metricasService;
 
     private final DonadoresYEntidadesClient donadoresYEntidadesClient;
 
@@ -198,29 +200,38 @@ public class Fachada implements FachadaDonaciones {
 
     @Transactional
     public DonacionDTO registrarDonacion(DonacionDTO donacionDTO) {
+        var timer = metricasService.iniciarTimerDonacion();
 
-        this.validarRegistroDonacion(donacionDTO);
+        try {
+            this.validarRegistroDonacion(donacionDTO);
 
-        this.validarRegistroDetallesProductos(donacionDTO.detallesProductosDTO());
+            this.validarRegistroDetallesProductos(donacionDTO.detallesProductosDTO());
 
-        val detallesProductosGuardados = this.registrarDetallesProductos(donacionDTO.detallesProductosDTO());
+            val detallesProductosGuardados = this.registrarDetallesProductos(donacionDTO.detallesProductosDTO());
 
-        val donacionSinID = this.donacionesDataMapper.toDonacion(donacionDTO);
+            val donacionSinID = this.donacionesDataMapper.toDonacion(donacionDTO);
 
-        donacionSinID.setDetallesProductos(detallesProductosGuardados);
+            donacionSinID.setDetallesProductos(detallesProductosGuardados);
 
-        val donacionGuardada = this.donacionesRepository.save(donacionSinID);
+            val donacionGuardada = this.donacionesRepository.save(donacionSinID);
 
-        val nuevoRegistro =
-                new RegistroEstado(String.valueOf(donacionGuardada.getId()), EstadoDonacionEnum.INGRESADA);
+            val nuevoRegistro =
+                    new RegistroEstado(String.valueOf(donacionGuardada.getId()), EstadoDonacionEnum.INGRESADA);
 
-        this.historialEstadosRepository.save(nuevoRegistro);
+            this.historialEstadosRepository.save(nuevoRegistro);
 
-        val donacionDTOguardada = this.donacionesDataMapper.toDonacionDTO(donacionGuardada);
+            val donacionDTOguardada = this.donacionesDataMapper.toDonacionDTO(donacionGuardada);
 
-        this.gestionDonacionByLogistica(donacionDTOguardada);
+            this.gestionDonacionByLogistica(donacionDTOguardada);
 
-        return donacionDTOguardada;
+            metricasService.registrarDonacionExitosa();
+            return donacionDTOguardada;
+        } catch (RuntimeException ex) {
+            metricasService.registrarDonacionRechazada(ex.getClass().getSimpleName());
+            throw ex;
+        } finally {
+            metricasService.finalizarTimerDonacion(timer);
+        }
 
     }
 
@@ -287,6 +298,7 @@ public class Fachada implements FachadaDonaciones {
 
     private void gestionDonacionByLogistica (DonacionDTO donacionDTO) {
         if(!(resultadoGestionLogistica(donacionDTO))){
+            metricasService.registrarDonacionRechazada("logistica");
             throw new DonacionNoSePuedeRegistrar("Donación invalidada por logística");
         }
     }
@@ -331,6 +343,7 @@ public class Fachada implements FachadaDonaciones {
     public DonacionDTO cambiarEstadoDeDonacion(String donacionID, EstadoDonacionEnum estado) {
 
         val donacionModificable = this.donacionValidadaParaCambioEstado(donacionID, estado);
+        val estadoAnterior = donacionModificable.getEstado().name();
 
         val donacionModificada = (donacionModificable).modificarEstado(estado);
 
@@ -340,6 +353,7 @@ public class Fachada implements FachadaDonaciones {
 
         val donacionGuardada = this.donacionesRepository.save(donacionModificada);
 
+        metricasService.registrarCambioEstado(estadoAnterior, estado.name());
         return this.donacionesDataMapper.toDonacionDTO(donacionGuardada);
     }
 
