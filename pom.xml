@@ -27,6 +27,7 @@
 
     <!-- Dependencies versions -->
     <mockito.version>5.22.0</mockito.version>
+    <micrometer.version>1.14.6</micrometer.version>
   </properties>
 
   <dependencyManagement>
@@ -104,6 +105,18 @@
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-test</artifactId>
       <scope>test</scope>
+    </dependency>
+
+    <!-- Metrics - Micrometer & Datadog -->
+    <dependency>
+      <groupId>io.micrometer</groupId>
+      <artifactId>micrometer-registry-datadog</artifactId>
+      <version>${micrometer.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>io.micrometer</groupId>
+      <artifactId>micrometer-core</artifactId>
+      <version>${micrometer.version}</version>
     </dependency>
 
   </dependencies>
