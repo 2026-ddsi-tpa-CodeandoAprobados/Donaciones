@@ -298,7 +298,6 @@ public class Fachada implements FachadaDonaciones {
 
     private void gestionDonacionByLogistica (DonacionDTO donacionDTO) {
         if(!(resultadoGestionLogistica(donacionDTO))){
-            metricasService.registrarDonacionRechazada("logistica");
             throw new DonacionNoSePuedeRegistrar("Donación invalidada por logística");
         }
     }
