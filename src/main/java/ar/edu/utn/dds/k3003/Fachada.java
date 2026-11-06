@@ -51,6 +51,7 @@ import lombok.Setter;
 import lombok.val;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import ar.edu.utn.dds.k3003.messaging.DonacionesEventPublisher;
 
 @Service
 public class Fachada implements FachadaDonaciones {
@@ -123,6 +124,9 @@ public class Fachada implements FachadaDonaciones {
     @Autowired
     private MetricasService metricasService;
 
+    @Autowired
+    private DonacionesEventPublisher donacionesEventPublisher;
+
     private final DonadoresYEntidadesClient donadoresYEntidadesClient;
 
     private final LogisticaClient logisticaClient;
@@ -183,7 +187,11 @@ public class Fachada implements FachadaDonaciones {
 
         val donacionAeliminar = donacionOpcionalAeliminar.get();
 
+        val donacionDTO = this.donacionesDataMapper.toDonacionDTO(donacionAeliminar);
+
         this.donacionesRepository.delete(donacionAeliminar);
+
+        this.donacionesEventPublisher.publicarDonacionEliminada(donacionDTO);
 
     }
 
@@ -223,6 +231,8 @@ public class Fachada implements FachadaDonaciones {
             val donacionDTOguardada = this.donacionesDataMapper.toDonacionDTO(donacionGuardada);
 
             this.gestionDonacionByLogistica(donacionDTOguardada);
+
+            this.donacionesEventPublisher.publicarDonacionCreada(donacionDTOguardada);
 
             metricasService.registrarDonacionExitosa();
             return donacionDTOguardada;
@@ -342,6 +352,7 @@ public class Fachada implements FachadaDonaciones {
     public DonacionDTO cambiarEstadoDeDonacion(String donacionID, EstadoDonacionEnum estado) {
 
         val donacionModificable = this.donacionValidadaParaCambioEstado(donacionID, estado);
+
         val estadoAnterior = donacionModificable.getEstado().name();
 
         val donacionModificada = (donacionModificable).modificarEstado(estado);
@@ -352,8 +363,13 @@ public class Fachada implements FachadaDonaciones {
 
         val donacionGuardada = this.donacionesRepository.save(donacionModificada);
 
+        val donacionDTO = this.donacionesDataMapper.toDonacionDTO(donacionGuardada);
+
         metricasService.registrarCambioEstado(estadoAnterior, estado.name());
-        return this.donacionesDataMapper.toDonacionDTO(donacionGuardada);
+
+        this.donacionesEventPublisher.publicarEstadoModificado(donacionDTO);
+
+        return donacionDTO;
     }
 
     public Donacion donacionValidadaParaCambioEstado(String donacionID, EstadoDonacionEnum estado) {
