@@ -695,7 +695,11 @@ public class Fachada implements FachadaDonaciones {
 
         val productoGuardado = this.productosRepository.save(productoAguardar);
 
-        return this.productosDataMapper.toProductoDTO(productoGuardado);
+        val productoDTOguardado = this.productosDataMapper.toProductoDTO(productoGuardado);
+
+        this.donacionesEventPublisher.publicarProductoCreado(productoDTOguardado);
+
+        return productoDTOguardado;
     }
 
     public ProductoDTO modificarProducto(String productoID, ProductoDTO productoDTOsinID){
@@ -710,13 +714,21 @@ public class Fachada implements FachadaDonaciones {
 
         val productoGuardado = this.productosRepository.save(productoAguardar);
 
-        return this.productosDataMapper.toProductoDTO(productoGuardado);
+        val productoDTOguardado = this.productosDataMapper.toProductoDTO(productoGuardado);
+
+        this.donacionesEventPublisher.publicarProductoModificado(productoDTOguardado);
+
+        return productoDTOguardado;
     }
 
     public void eliminarProducto(String productoID){
 
         val productoAeliminar =  this.productoExistente(productoID);
+        val productoDTOeliminado = this.productosDataMapper.toProductoDTO(productoAeliminar);
+
         this.productosRepository.delete(productoAeliminar);
+
+        this.donacionesEventPublisher.publicarProductoEliminado(productoDTOeliminado);
 
     }
 
