@@ -22,6 +22,7 @@ import ar.edu.utn.dds.k3003.model.donaciones.Donacion;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.stream.Stream;
 
@@ -822,6 +823,16 @@ public class Fachada implements FachadaDonaciones {
         this.detallesProductosRepository.deleteAll();
         this.categoriasRepository.deleteAll();
         this.subcategoriasRepository.deleteAll();
+        this.donacionesEventPublisher.publicarBaseLimpiada();
+    }
+
+    /** Vuelve a publicar PRODUCTO_CREADO por cada producto existente. Devuelve cuántos se enviaron y el total. */
+    public Map<String, Integer> republicarProductos() {
+        val productos = this.productosRepository.findAll().stream()
+                .map(producto -> this.productosDataMapper.toProductoDTO(producto))
+                .toList();
+        int republicados = this.donacionesEventPublisher.republicarProductos(productos);
+        return Map.of("republicados", republicados, "total", productos.size());
     }
 
 }

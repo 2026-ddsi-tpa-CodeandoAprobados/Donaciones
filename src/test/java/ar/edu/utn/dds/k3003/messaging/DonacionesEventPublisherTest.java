@@ -2,6 +2,8 @@ package ar.edu.utn.dds.k3003.messaging;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
@@ -180,5 +182,100 @@ class DonacionesEventPublisherTest {
                 "\"estado\":\"INGRESADA\"", "\"fechaRegistro\":\"2026-11-06\"", "\"tipo\":\"DONACION_CREADA\"")) {
             assertTrue(json.contains(campo), campo + " no está en " + json);
         }
+    }
+
+    // ---------------- BASE_LIMPIADA ----------------
+
+    @Test
+    void laBaseLimpiadaSalePorSuClaveConIdReferenciaDonacionesYSinPayload() throws Exception {
+        publicador.publicarBaseLimpiada();
+
+        EventoDonaciones evento = eventoEnviado("donaciones.base.limpiada");
+        assertEquals(TipoEventoDonaciones.BASE_LIMPIADA, evento.tipo());
+        assertEquals("donaciones", evento.idReferencia());
+        assertNotNull(evento.id());
+        assertNotNull(evento.timestamp());
+        assertNull(evento.donacion());
+        assertNull(evento.producto());
+
+        String json = new ObjectMapper().registerModule(new JavaTimeModule())
+                .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS).writeValueAsString(evento);
+        assertTrue(json.contains("\"tipo\":\"BASE_LIMPIADA\""), json);
+        assertTrue(json.contains("\"idReferencia\":\"donaciones\""), json);
+        assertFalse(json.contains("\"donacion\""), json);
+        assertFalse(json.contains("\"producto\""), json);
+    }
+
+    @Test
+    void dentroDeUnaTransaccionLaBaseLimpiadaSaleRecienDespuesDelCommit() {
+        TransactionSynchronizationManager.initSynchronization();
+
+        publicador.publicarBaseLimpiada();
+
+        verify(rabbit, never()).convertAndSend(any(String.class), any(String.class), any(Object.class));
+        TransactionSynchronizationManager.getSynchronizations().forEach(TransactionSynchronization::afterCommit);
+        verify(rabbit, times(1)).convertAndSend(eq("donatrack.exchange"), eq("donaciones.base.limpiada"), any(Object.class));
+    }
+
+    @Test
+    void siLaTransaccionSeDeshaceNoSaleLaBaseLimpiada() {
+        TransactionSynchronizationManager.initSynchronization();
+
+        publicador.publicarBaseLimpiada();
+        TransactionSynchronizationManager.getSynchronizations()
+                .forEach(s -> s.afterCompletion(TransactionSynchronization.STATUS_ROLLED_BACK));
+
+        verify(rabbit, never()).convertAndSend(any(String.class), any(String.class), any(Object.class));
+    }
+
+    @Test
+    void siElBrokerFallaLaBaseLimpiadaNoRompeLaOperacion() {
+        doThrow(new AmqpConnectException(new RuntimeException("sin broker")))
+                .when(rabbit).convertAndSend(any(String.class), any(String.class), any(Object.class));
+
+        assertDoesNotThrow(() -> publicador.publicarBaseLimpiada());
+    }
+
+    // ---------------- Republicar productos ----------------
+
+    @Test
+    void republicarProductosEnviaUnProductoCreadoPorCadaUnoConSuClasificacion() {
+        int enviados = publicador.republicarProductos(List.of(
+                new ProductoDTO("7", "Fideos Matarazzo", "Paquete de 500g", "2", "5"),
+                new ProductoDTO("8", "Arroz", "1kg", "99", "6")));
+
+        assertEquals(2, enviados);
+        ArgumentCaptor<EventoDonaciones> captor = ArgumentCaptor.forClass(EventoDonaciones.class);
+        verify(rabbit, times(2)).convertAndSend(eq("donatrack.exchange"), eq("donaciones.producto.creado"),
+                captor.capture());
+        EventoDonaciones fideos = captor.getAllValues().get(0);
+        assertEquals(TipoEventoDonaciones.PRODUCTO_CREADO, fideos.tipo());
+        assertEquals("7", fideos.idReferencia());
+        assertNull(fideos.donacion());
+        assertEquals("Fideos Matarazzo", fideos.producto().nombre());
+        assertEquals("Fideos", fideos.producto().subcategoria());
+        assertEquals("Alimentos", fideos.producto().categoria());
+        assertEquals("8", captor.getAllValues().get(1).idReferencia());
+    }
+
+    @Test
+    void siFallaUnEnvioRepublicarSigueConLosDemasYCuentaSoloLosEnviados() {
+        doThrow(new AmqpConnectException(new RuntimeException("sin broker")))
+                .doNothing()
+                .when(rabbit).convertAndSend(any(String.class), any(String.class), any(Object.class));
+
+        int enviados = publicador.republicarProductos(List.of(
+                new ProductoDTO("7", "Fideos Matarazzo", "Paquete de 500g", "2", "5"),
+                new ProductoDTO("8", "Arroz", "1kg", "2", "6")));
+
+        assertEquals(1, enviados);
+        verify(rabbit, times(2)).convertAndSend(eq("donatrack.exchange"), eq("donaciones.producto.creado"),
+                any(Object.class));
+    }
+
+    @Test
+    void republicarSinProductosNoEnviaNada() {
+        assertEquals(0, publicador.republicarProductos(List.of()));
+        verify(rabbit, never()).convertAndSend(any(String.class), any(String.class), any(Object.class));
     }
 }

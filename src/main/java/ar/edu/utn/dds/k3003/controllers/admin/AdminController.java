@@ -4,7 +4,9 @@ import ar.edu.utn.dds.k3003.Fachada;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
+import java.util.Map;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -23,6 +25,11 @@ public class AdminController {
         return ResponseEntity.status(HttpStatusCode.valueOf(204)).build();
     }
 
+    /** Vuelve a publicar PRODUCTO_CREADO por cada producto existente, para el modelo de lectura. */
+    @PostMapping("/republicar-productos")
+    public ResponseEntity<Map<String, Integer>> republicarProductos() {
+        return ResponseEntity.ok(fachada.republicarProductos());
+    }
 
 
 }

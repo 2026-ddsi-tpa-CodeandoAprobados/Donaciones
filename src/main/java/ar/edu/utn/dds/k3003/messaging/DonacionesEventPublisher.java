@@ -84,6 +84,44 @@ public class DonacionesEventPublisher {
         publicarProducto("donaciones.producto.eliminado", TipoEventoDonaciones.PRODUCTO_ELIMINADO, producto);
     }
 
+    /**
+     * Vuelve a publicar PRODUCTO_CREADO por cada producto, con el mismo payload que al crearlo. Sirve para que el
+     * modelo de lectura conozca los productos que existían antes de que se publicaran estos eventos. Un producto que
+     * falla se registra y se sigue con el próximo.
+     *
+     * @return cuántos eventos se enviaron al broker
+     */
+    public int republicarProductos(List<ProductoDTO> productos) {
+        int enviados = 0;
+        for (ProductoDTO producto : productos) {
+            try {
+                EventoDonaciones evento = new EventoDonaciones(UUID.randomUUID().toString(),
+                        TipoEventoDonaciones.PRODUCTO_CREADO, Instant.now(), producto.id(), null,
+                        productoEvento(producto));
+                if (enviar("donaciones.producto.creado", evento)) {
+                    enviados++;
+                }
+            } catch (Exception e) {
+                log.warn("No se pudo armar el evento PRODUCTO_CREADO del producto {}: {}", producto.id(),
+                        e.getMessage());
+            }
+        }
+        return enviados;
+    }
+
+    // ---------------- Base ----------------
+
+    /** Se vació la base de Donaciones: el modelo de lectura debe borrar lo suyo. */
+    public void publicarBaseLimpiada() {
+        try {
+            EventoDonaciones evento = new EventoDonaciones(UUID.randomUUID().toString(),
+                    TipoEventoDonaciones.BASE_LIMPIADA, Instant.now(), "donaciones", null, null);
+            enviarDespuesDelCommit("donaciones.base.limpiada", evento);
+        } catch (Exception e) {
+            log.warn("No se pudo armar el evento {}: {}", TipoEventoDonaciones.BASE_LIMPIADA, e.getMessage());
+        }
+    }
+
     // ---------------- Armado y envío ----------------
 
     private void publicarDonacion(String routingKey, TipoEventoDonaciones tipo, DonacionDTO donacion) {
@@ -167,14 +205,17 @@ public class DonacionesEventPublisher {
         }
     }
 
-    private void enviar(String routingKey, EventoDonaciones evento) {
+    /** @return true si el broker aceptó el envío */
+    private boolean enviar(String routingKey, EventoDonaciones evento) {
         try {
             rabbitTemplate.convertAndSend(exchangeName, routingKey, evento);
             log.info("Evento {} publicado en {} ({}), idReferencia {}", evento.tipo(), exchangeName, routingKey,
                     evento.idReferencia());
+            return true;
         } catch (Exception e) {
             log.warn("No se pudo publicar el evento {} (idReferencia {}): {}", evento.tipo(), evento.idReferencia(),
                     e.getMessage());
+            return false;
         }
     }
 }
